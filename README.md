@@ -59,11 +59,7 @@ Cargo and rust installed (See [Rustup](https://rustup.rs/)).
 
 ### Installation
 
-`cargo add rndtable`
-
 ## Usage
-
-See [Doc.rs](https://docs.rs/rndtable/latest/toml/)
 
 ## Roadmap
 
