@@ -3,6 +3,7 @@ import "../../resources/fonts/lineicons.ttf";
 
 export component SidebarButton inherits Rectangle {
     in-out property <string> icon <=> icon.text;
+    in-out property <bool> active: false;
 
     height: 47px;
     width: 47px;
@@ -10,6 +11,9 @@ export component SidebarButton inherits Rectangle {
     ta := TouchArea {
         width: parent.width;
         height: parent.height;
+        clicked => {
+            active = !active
+        }
     }
 
     icon := Text {
