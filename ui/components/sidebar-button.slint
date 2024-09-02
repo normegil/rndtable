@@ -7,9 +7,23 @@ export component SidebarButton inherits Rectangle {
     height: 47px;
     width: 47px;
 
+    ta := TouchArea {
+        width: parent.width;
+        height: parent.height;
+    }
+
     icon := Text {
         font-family: "lineicons";
         font-size: 28px;
-        color: Palette.sidebar-text;
+
+        states [
+            active when ta.has-hover: {
+                color: Palette.sidebar-text-hover;
+            }
+            inactive when !ta.has-hover: {
+                color: Palette.sidebar-text;
+            }
+        ]
+        
     }
 }
