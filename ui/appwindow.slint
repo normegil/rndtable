@@ -1,6 +1,7 @@
 import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Palette } from "palette.slint";
 import { BorderVertical, BorderHorizontal } from "borders.slint";
+import "../resources/fonts/lineicons.ttf";
 
 export component AppWindow inherits Window {
     width: 1024px;
@@ -33,6 +34,13 @@ export component AppWindow inherits Window {
                     y: 0;
                     
                     background: Palette.background-secondary;
+
+                    Text {
+                        font-family: "lineicons";
+                        text: "Test: ";
+                        font-size: 40px;
+                        color: Palette.sidebar;
+                    }
                 }
             }
         }
