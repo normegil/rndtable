@@ -16,15 +16,34 @@ export component SidebarButton inherits Rectangle {
         }
     }
 
+    active-indicator := Rectangle {
+        x: 0;
+        y: 0;
+        
+        background: Palette.primary;
+
+        states [
+            active when active : {
+                width: 3px;
+            }
+            inactive when !active : {
+                width: 0px;
+            }
+        ]
+    }
+
     icon := Text {
         font-family: "lineicons";
         font-size: 28px;
 
         states [
-            active when ta.has-hover: {
+            active when active: {
+                color: Palette.sidebar-text-active;
+            }
+            hovered when ta.has-hover: {
                 color: Palette.sidebar-text-hover;
             }
-            inactive when !ta.has-hover: {
+            neutral when !active && !ta.has-hover: {
                 color: Palette.sidebar-text;
             }
         ]
