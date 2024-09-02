@@ -2,6 +2,7 @@ import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Palette } from "palette.slint";
 import { BorderVertical, BorderHorizontal } from "./components/borders.slint";
 import "../resources/fonts/lineicons.ttf";
+import { SidebarButton } from "components/sidebar-button.slint";
 
 export component AppWindow inherits Window {
     preferred-width: 1024px;
@@ -27,13 +28,24 @@ export component AppWindow inherits Window {
 
                     background: Palette.background-main;
 
-                    Text {
-                        font-family: "lineicons";
-                        text: "";
-                        font-size: 34px;
-                        color: Palette.sidebar;
-                    }
+                    VerticalLayout {
+                        VerticalLayout {
+                            SidebarButton {
+                                icon: "";
+                            }
+    
+                            SidebarButton {
+                                icon: "";
+                            }
+                        }
 
+                        VerticalLayout {
+                            alignment: end;
+                            SidebarButton {
+                                icon: "";
+                            }
+                        }
+                    }                    
                 }
 
                 BorderVertical {}

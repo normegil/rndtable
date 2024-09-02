@@ -1,3 +1,15 @@
-export component SidebarButton {
-    
+import { Palette } from "../palette.slint";
+import "../../resources/fonts/lineicons.ttf";
+
+export component SidebarButton inherits Rectangle {
+    in-out property <string> icon <=> icon.text;
+
+    height: 47px;
+    width: 47px;
+
+    icon := Text {
+        font-family: "lineicons";
+        font-size: 28px;
+        color: Palette.sidebar-text;
+    }
 }
