@@ -1,20 +1,39 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { Palette } from "palette.slint";
+import { BorderVertical, BorderHorizontal } from "borders.slint";
 
 export component AppWindow inherits Window {
     width: 1024px;
     height: 768px;
 
-    in-out property <int> counter: 42;
-    callback request-increase-value();
-    VerticalBox {
-        Text {
-            text: "Counter: \{root.counter}";
+    VerticalLayout {
+        top-menu := Rectangle {
+            x: 0;
+            height: 34px;
+
+            background: Palette.background-main;
         }
 
-        Button {
-            text: "Increase value";
-            clicked => {
-                root.request-increase-value();
+        BorderHorizontal {}
+
+        Rectangle {
+            x: 0;
+            
+            HorizontalLayout {
+                icons-sidebar := Rectangle {
+                    y: 0;
+                    width: 47px;
+
+                    background: Palette.background-main;
+                }
+
+                BorderVertical {}
+
+                content := Rectangle {
+                    y: 0;
+                    
+                    background: Palette.background-secondary;
+                }
             }
         }
     }
