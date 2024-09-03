@@ -2,10 +2,41 @@ import { Palette } from "../palette.slint";
 
 export component BorderVertical inherits Rectangle {
     in-out property <length> size: 1px;
-
+    
     y: 0;
     width <=> size;
     background: Palette.borders;
+}
+
+export component BorderVerticalResize inherits Rectangle {
+    in-out property <length> size: 1px;
+    in property <color> border-left-color;
+    in property <color> border-right-color;
+    
+    y: 0;
+    width: 4px + size;
+
+    TouchArea {
+        mouse-cursor: ew-resize;
+    }
+
+    Rectangle {
+        x: 0;
+        width: 2px;
+        background: border-left-color;
+    }
+
+    Rectangle {
+        x: 1px;
+        width <=> size;
+        background: Palette.borders;
+    }
+
+    Rectangle {
+        x: 2px + size;
+        width: 2px;
+        background: border-right-color;
+    }
 }
 
 export component BorderHorizontal inherits Rectangle {
