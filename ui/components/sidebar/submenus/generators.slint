@@ -10,8 +10,9 @@ export component GeneratorsSubMenu inherits SubMenu {
         height: 20px;
 
         ComboBox {
+            x: 10px;
             height: parent.height;
-            width: parent.width;
+            width: parent.width - 20px;
             model: ["Cyberpunk RED", "Dungeons & Dragons", "Pathfinder"];
             current-value <=> current_workspace;
         }
