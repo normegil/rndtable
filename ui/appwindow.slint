@@ -2,7 +2,18 @@ import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Palette } from "palette.slint";
 import { BorderVertical, BorderHorizontal } from "./components/borders.slint";
 import "../resources/fonts/lineicons.ttf";
-import { SidebarButton } from "components/sidebar-button.slint";
+import { Sidebar } from "components/sidebar.slint";
+
+enum SidebarButtonPosition {
+    Top,
+    Bottom
+}
+
+struct SidebarButtonData {
+    icon: string,
+    position: SidebarButtonPosition,
+    active: bool,
+}
 
 export component AppWindow inherits Window {
     preferred-width: 1024px;
@@ -22,31 +33,7 @@ export component AppWindow inherits Window {
             x: 0;
             
             HorizontalLayout {
-                icons-sidebar := Rectangle {
-                    y: 0;
-                    width: 47px;
-
-                    background: Palette.background-main;
-
-                    VerticalLayout {
-                        VerticalLayout {
-                            SidebarButton {
-                                icon: "";
-                            }
-    
-                            SidebarButton {
-                                icon: "";
-                            }
-                        }
-
-                        VerticalLayout {
-                            alignment: end;
-                            SidebarButton {
-                                icon: "";
-                            }
-                        }
-                    }                    
-                }
+                Sidebar {}
 
                 BorderVertical {}
 

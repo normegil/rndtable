@@ -1,0 +1,51 @@
+import { SidebarButton } from "sidebar-button.slint";
+import { Palette } from "../palette.slint";
+
+struct SidebarButtonData {
+    icon: string,
+}
+
+export component Sidebar inherits Rectangle {
+    y: 0;
+    width: 47px;
+
+    background: Palette.background-main;
+
+    out property <int> active_menu: 0;
+
+    in property <[SidebarButtonData]> buttons: [
+        { icon: "" }, // Generators
+        { icon: "" }, // Filters
+    ];
+
+    VerticalLayout {
+        VerticalLayout {
+            for but[i] in buttons: SidebarButton {
+                icon: but.icon;
+                active: i == root.active_menu;
+                clicked => {
+                    if self.active {
+                        root.active_menu = 999;
+                    } else {
+                        root.active_menu = i;
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            alignment: end;
+            SidebarButton {
+                icon: ""; // Settings
+                active: -1 == root.active_menu;
+                clicked => {
+                    if self.active {
+                        root.active_menu = 999;
+                    } else {
+                        root.active_menu = -1;
+                    }
+                }
+            }
+        }
+    }     
+}
