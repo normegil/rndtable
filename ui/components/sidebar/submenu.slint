@@ -1,0 +1,22 @@
+import { Palette } from "../../palette.slint";
+export component SubMenu inherits VerticalLayout {
+    in property <string> title;
+
+    VerticalLayout {
+        Rectangle {
+            
+            height: 36px;
+
+            Text {
+                x: 20px;
+                y: 10px;
+
+                font-size: 12px;
+                text: title;
+                color: Palette.text;
+            }
+        }
+
+        @children
+    }
+}

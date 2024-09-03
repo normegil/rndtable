@@ -1,8 +1,10 @@
-import { Palette } from "../palette.slint";
+import { Palette } from "../../palette.slint";
 export component SidebarSubMenu inherits Rectangle {
     in-out property <length> size;
 
     y:0;
     width <=> size;
     background: Palette.background-main;
+
+    @children
 }

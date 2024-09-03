@@ -1,10 +1,15 @@
 import { SidebarMenu, Menu } from "sidebar-menu.slint";
-import { BorderVertical, BorderVerticalResize } from "borders.slint";
+import { BorderVertical, BorderVerticalResize } from "../borders.slint";
 import { SidebarSubMenu } from "sidebar-submenu.slint";
-import { Palette } from "../palette.slint";
+import { Palette } from "../../palette.slint";
+import { SubMenu } from "submenu.slint";
+import { GeneratorsSubMenu } from "submenus/generators.slint";
+import { FiltersSubMenu } from "submenus/filters.slint";
+import { SettingsSubMenu } from "submenus/settings.slint";
 export component Sidebar inherits Rectangle {
     property <length> submenu-size: 350px;
     property <bool> resizable-border-displayed: true;
+    property <Menu> current-menu : Menu.Generators;
     
     HorizontalLayout {
         SidebarMenu {
@@ -16,6 +21,7 @@ export component Sidebar inherits Rectangle {
                     submenu-size = 350px;
                     resizable-border-displayed = true;
                 }
+                current-menu = menu;
             }
         }
 
@@ -23,6 +29,10 @@ export component Sidebar inherits Rectangle {
 
         SidebarSubMenu {
             size <=> submenu-size;
+
+            if (current-menu == Menu.Generators) : GeneratorsSubMenu {}
+            if (current-menu == Menu.Filters) : FiltersSubMenu {}
+            if (current-menu == Menu.Settings) : SettingsSubMenu {}
         }
 
         BorderVerticalResize {
