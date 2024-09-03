@@ -3,6 +3,7 @@ import { Palette } from "palette.slint";
 import { BorderVertical, BorderHorizontal } from "./components/borders.slint";
 import "../resources/fonts/lineicons.ttf";
 import { Sidebar } from "components/sidebar.slint";
+import { MainMenu } from "components/main-menu.slint";
 
 enum SidebarButtonPosition {
     Top,
@@ -20,12 +21,7 @@ export component AppWindow inherits Window {
     preferred-height: 768px;
 
     VerticalLayout {
-        top-menu := Rectangle {
-            x: 0;
-            height: 34px;
-
-            background: Palette.background-main;
-        }
+        MainMenu {}
 
         BorderHorizontal {}
 
