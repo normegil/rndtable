@@ -1,4 +1,19 @@
 import { SubMenu } from "../submenu.slint";
+import { ScrollView, ComboBox } from "std-widgets.slint";
+import { Palette } from "../../../palette.slint";
 export component GeneratorsSubMenu inherits SubMenu {
+    in-out property <string> current_workspace;
+
     title: "GENERATORS";
+
+    Rectangle {
+        height: 20px;
+
+        ComboBox {
+            height: parent.height;
+            width: parent.width;
+            model: ["Cyberpunk RED", "Dungeons & Dragons", "Pathfinder"];
+            current-value <=> current_workspace;
+        }
+    }
 }
