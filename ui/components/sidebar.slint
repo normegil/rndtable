@@ -1,12 +1,23 @@
-import { SidebarMenu } from "sidebar-menu.slint";
+import { SidebarMenu, Menu } from "sidebar-menu.slint";
 import { BorderVertical, BorderVerticalResize } from "borders.slint";
 import { SidebarSubMenu } from "sidebar-submenu.slint";
 import { Palette } from "../palette.slint";
 export component Sidebar inherits Rectangle {
-    property <length> submenu-size: 500px;
+    property <length> submenu-size: 350px;
+    property <bool> resizable-border-displayed: true;
     
     HorizontalLayout {
-        SidebarMenu {}
+        SidebarMenu {
+            menu_change(menu) => {
+                if (menu == Menu.Closed) {
+                    submenu-size = 0px;
+                    resizable-border-displayed = false;
+                } else if submenu-size == 0px {
+                    submenu-size = 350px;
+                    resizable-border-displayed = true;
+                }
+            }
+        }
 
         BorderVertical {}
 
@@ -17,6 +28,7 @@ export component Sidebar inherits Rectangle {
         BorderVerticalResize {
             border-left-color: Palette.background-main;
             border-right-color: Palette.background-secondary;
+            size: resizable-border-displayed ? 1px : 0px;
             resize(movement) => {
                 if (root.submenu-size + movement < 169px) {
                     root.submenu-size = 169px;

@@ -16,7 +16,7 @@ export component BorderVerticalResize inherits Rectangle {
     callback resize(length);
     
     y: 0;
-    width: 4px + size;
+    width: size != 0 ? 4px + size : 0px;
 
     touch := TouchArea {
         mouse-cursor: ew-resize;

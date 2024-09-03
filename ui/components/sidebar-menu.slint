@@ -1,10 +1,11 @@
 import { SidebarButton } from "sidebar-button.slint";
 import { Palette } from "../palette.slint";
 
-enum Menu {
+export enum Menu {
     Generators,
     Filters,
     Settings,
+    Closed,
 }
 
 struct SidebarButtonData {
@@ -35,10 +36,11 @@ export component SidebarMenu inherits Rectangle {
                 clicked => {
                     if self.active {
                         root.active_menu = 999;
+                        root.menu_change(Menu.Closed)
                     } else {
                         root.active_menu = i;
+                        root.menu_change(but.menu)
                     }
-                    root.menu_change(but.menu)
                 }
             }
         }
@@ -51,10 +53,11 @@ export component SidebarMenu inherits Rectangle {
                 clicked => {
                     if self.active {
                         root.active_menu = 999;
+                        root.menu_change(Menu.Closed)
                     } else {
                         root.active_menu = -1;
+                        root.menu_change(Menu.Settings)
                     }
-                    root.menu_change(Menu.Settings)
                 }
             }
         }
