@@ -3,9 +3,9 @@ import { BorderVertical, BorderVerticalResize } from "borders.slint";
 import { SidebarSubMenu } from "sidebar-submenu.slint";
 import { Palette } from "../palette.slint";
 export component Sidebar inherits Rectangle {
+    property <length> submenu-size: 500px;
+    
     HorizontalLayout {
-        property <length> submenu-size: 500px;
-
         SidebarMenu {}
 
         BorderVertical {}
@@ -17,6 +17,13 @@ export component Sidebar inherits Rectangle {
         BorderVerticalResize {
             border-left-color: Palette.background-main;
             border-right-color: Palette.background-secondary;
+            resize(movement) => {
+                if (root.submenu-size + movement < 169px) {
+                    root.submenu-size = 169px;
+                } else {
+                    root.submenu-size += movement
+                }
+            }
         }
     }
 }

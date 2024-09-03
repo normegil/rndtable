@@ -12,28 +12,44 @@ export component BorderVerticalResize inherits Rectangle {
     in-out property <length> size: 1px;
     in property <color> border-left-color;
     in property <color> border-right-color;
+
+    callback resize(length);
     
     y: 0;
     width: 4px + size;
 
-    TouchArea {
+    touch := TouchArea {
         mouse-cursor: ew-resize;
+        moved => {
+            root.resize(self.mouse-x - self.pressed-x)
+        }
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down) {
+                left.background = Palette.primary;
+                border.background = Palette.primary;
+                right.background = Palette.primary;
+            } else if (event.kind == PointerEventKind.up) {
+                left.background = border-left-color;
+                border.background = Palette.borders;
+                right.background = border-right-color;
+            }
+        }
     }
 
-    Rectangle {
+    left := Rectangle {
         x: 0;
         width: 2px;
         background: border-left-color;
     }
 
-    Rectangle {
+    border := Rectangle {
         x: 1px;
         width <=> size;
         background: Palette.borders;
     }
 
-    Rectangle {
-        x: 2px + size;
+    right := Rectangle {
+        x: 1px + size;
         width: 2px;
         background: border-right-color;
     }
