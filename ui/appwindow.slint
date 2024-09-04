@@ -4,6 +4,7 @@ import { BorderVertical, BorderHorizontal } from "./components/borders.slint";
 import "../resources/fonts/lineicons.ttf";
 import { Sidebar } from "components/sidebar/sidebar.slint";
 import { MainMenu } from "components/main-menu.slint";
+import { HierarchyEntry } from "components/hierarchy.slint";
 
 enum SidebarButtonPosition {
     Top,
@@ -20,6 +21,10 @@ export component AppWindow inherits Window {
     preferred-width: 1024px;
     preferred-height: 768px;
 
+    in-out property <string> current_workspace;
+    in-out property <[string]> workspaces;
+    in-out property <[HierarchyEntry]> generation_entries;
+
     VerticalLayout {
         MainMenu {}
 
@@ -29,7 +34,11 @@ export component AppWindow inherits Window {
             x: 0;
             
             HorizontalLayout {
-                Sidebar {}
+                Sidebar {
+                    current_workspace <=> current_workspace;
+                    workspaces <=> workspaces;
+                    generation_entries <=> generation_entries;
+                }
 
                 content := Rectangle {
                     y: 0;
