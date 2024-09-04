@@ -2,8 +2,16 @@ import { SubMenu } from "../submenu.slint";
 import { ScrollView, ComboBox } from "std-widgets.slint";
 import { Palette } from "../../../palette.slint";
 import { CustomComboBox } from "../../combobox.slint";
+import { Hierarchy } from "../../hierarchy.slint";
+
+struct Entry {
+    title: string,
+    is_folder : bool,
+}
+
 export component GeneratorsSubMenu inherits SubMenu {
     in-out property <string> current_workspace;
+    in-out property <[Entry]> entries;
 
     title: "GENERATORS";
 
@@ -19,5 +27,20 @@ export component GeneratorsSubMenu inherits SubMenu {
             ];
             active_option: "Cyberpunk RED";
         }
+    }
+
+    Rectangle {
+        height: 10px;
+    }
+
+    ScrollView {
+         Hierarchy {
+            entries: [
+                { title: "Root", is_folder: true, folded: false, identation: 0 },
+                { title: "Dossier", is_folder: true, folded: true, identation: 1 },
+                { title: "Autre Dossier", is_folder: true, folded: true, identation: 1 },
+                { title: "PNJs", is_folder: false, folded: false, identation: 1 },
+            ];
+         }
     }
 }

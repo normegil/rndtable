@@ -1,0 +1,41 @@
+import { Palette } from "../palette.slint";
+export struct HierarchyEntry {
+    title: string,
+    folded: bool,
+    identation: int,
+    is_folder: bool,
+}
+
+export component HierarchyElement inherits Rectangle {
+    in-out property <HierarchyEntry> entry;
+
+    height: 25px;
+
+    ta := TouchArea {}
+
+    
+    Text {
+        x: 15px + (10px * entry.identation);
+        text: (entry.is_folder ? entry.folded ? " " : " " : " ") + entry.title;
+    }
+
+    states [
+        hovered when ta.has-hover: {
+            background: Palette.background-main-hover;
+        }
+        not-hovered when !ta.has-hover: {
+            background: Palette.background-main;
+        }
+    ]
+}
+
+export component Hierarchy inherits Rectangle {
+    in-out property <[HierarchyEntry]> entries;
+
+    VerticalLayout {
+        for entry in entries: HierarchyElement {
+            width: parent.width;
+            entry: entry;
+        }
+    }
+}
