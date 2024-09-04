@@ -1,0 +1,91 @@
+import { Palette } from "../palette.slint";
+import { BorderHorizontal, BorderVertical } from "borders.slint";
+export component CustomComboBox inherits Rectangle {
+    in-out property <[string]> model;
+    in-out property <string> active_option;
+
+    callback selected(string);
+
+    height: 20px;
+    border-color: Palette.borders;
+    border-width: 1px;
+
+    ta := TouchArea {
+        clicked => {
+            popup.show();
+        }
+    }
+
+    states [
+        hovered when ta.has-hover: {
+            background: Palette.background-main;
+        }
+        not-hovered when !ta.has-hover: {
+            background: Palette.background-secondary;
+        }
+    ]
+
+    HorizontalLayout {
+        alignment: LayoutAlignment.space-between;
+        padding-top: 2px;
+        padding-bottom <=> self.padding-top;
+        padding-left: 10px;
+        padding-right <=> self.padding-left;
+        Text {
+            text: root.active_option;
+            font-size: 14px;
+        }
+
+        Text {
+            text: "";
+            font-size: 14px;
+        }
+    }
+
+    popup := PopupWindow {
+        width: root.width;
+        height: 50px;
+
+        y: root.y + root.height;
+
+        VerticalLayout {
+            HorizontalLayout {
+                BorderVertical {}
+
+                VerticalLayout {
+                    for instance in model: Rectangle {
+                        height: 20px;
+                        width: root.width - 2px;
+            
+                        Text {
+                            x: 10px;
+        
+                            text: instance;
+                            font-size: 14px;
+                        }
+            
+                        thista := TouchArea {
+                            clicked => {
+                                root.active_option = instance;
+                                root.selected(instance);
+                            }
+                        }
+        
+                        states [
+                            hovered when thista.has-hover: {
+                                background: Palette.background-main;
+                            }
+                            not-hovered when !thista.has-hover: {
+                                background: Palette.background-secondary;
+                            }
+                        ]
+                    }
+                }
+
+                BorderVertical {}
+            }
+
+            BorderHorizontal {}
+        }
+    }
+}

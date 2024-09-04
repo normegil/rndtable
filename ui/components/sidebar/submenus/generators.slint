@@ -1,6 +1,7 @@
 import { SubMenu } from "../submenu.slint";
 import { ScrollView, ComboBox } from "std-widgets.slint";
 import { Palette } from "../../../palette.slint";
+import { CustomComboBox } from "../../combobox.slint";
 export component GeneratorsSubMenu inherits SubMenu {
     in-out property <string> current_workspace;
 
@@ -9,12 +10,14 @@ export component GeneratorsSubMenu inherits SubMenu {
     Rectangle {
         height: 20px;
 
-        ComboBox {
-            x: 10px;
-            height: parent.height;
+        CustomComboBox {
             width: parent.width - 20px;
-            model: ["Cyberpunk RED", "Dungeons & Dragons", "Pathfinder"];
-            current-value <=> current_workspace;
+            model: [
+                "Dungeons and Dragons",
+                "Cyberpunk RED",
+                "Another JDR"
+            ];
+            active_option: "Cyberpunk RED";
         }
     }
 }
