@@ -16,6 +16,10 @@ fn main() -> Result<(), slint::PlatformError> {
     let entries = get_entries();
     ui.set_generation_entries(to_entries_model(&entries));
 
+    ui.on_clicked_generator_entry(|id| {
+        println!("Entry clicked: {id}");
+    });
+
     ui.run()
 }
 
@@ -29,13 +33,16 @@ fn to_workspace_model(workspaces: &Vec<String>) -> ModelRc<SharedString> {
 }
 
 fn to_entries_model(entries: &RecursiveHierarchyEntry) -> ModelRc<HierarchyEntry> {
-    let tmp = flatten_entry(entries, 0);
+    let tmp = flatten_entry(entries, 0, "/");
     let tmp = VecModel::from(tmp);
     ModelRc::new(tmp)
 }
 
-fn flatten_entry(entry: &RecursiveHierarchyEntry, identation: i32) -> Vec<HierarchyEntry> {
+fn flatten_entry(entry: &RecursiveHierarchyEntry, identation: i32, parent_id: &str) -> Vec<HierarchyEntry> {
+    let current_id = parent_id.to_string() + "/" + &entry.title;
+
     let mut entries = vec![HierarchyEntry {
+        id: SharedString::from(&current_id),
         folded: entry.folded.unwrap_or(true),
         identation: identation,
         is_folder: entry.folded.is_some(),
@@ -44,7 +51,7 @@ fn flatten_entry(entry: &RecursiveHierarchyEntry, identation: i32) -> Vec<Hierar
 
     if entry.folded.is_some_and(|folded| !folded) {
         for subentry in &entry.subentries {
-            entries.extend(flatten_entry(subentry, identation + 1))
+            entries.extend(flatten_entry(subentry, identation + 1, &current_id))
         }
     }
 

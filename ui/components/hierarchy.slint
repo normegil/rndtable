@@ -1,5 +1,6 @@
 import { Palette } from "../palette.slint";
 export struct HierarchyEntry {
+    id: string,
     title: string,
     folded: bool,
     identation: int,
@@ -9,9 +10,15 @@ export struct HierarchyEntry {
 component HierarchyElement inherits Rectangle {
     in-out property <HierarchyEntry> entry;
 
+    callback clicked(string);
+
     height: 25px;
 
-    ta := TouchArea {}
+    ta := TouchArea {
+        clicked => {
+            root.clicked(entry.id);
+        }
+    }
 
     
     Text {
@@ -32,10 +39,15 @@ component HierarchyElement inherits Rectangle {
 export component Hierarchy inherits Rectangle {
     in-out property <[HierarchyEntry]> entries;
 
+    callback clicked_entry(string);
+
     VerticalLayout {
         for entry in entries: HierarchyElement {
             width: parent.width;
             entry: entry;
+            clicked(id) => {
+                root.clicked_entry(id)
+            }
         }
     }
 }
