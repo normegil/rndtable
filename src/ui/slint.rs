@@ -51,6 +51,10 @@ impl SlintUI {
     }
 
     fn generator_entry_clicked(&self, current_workspace: String, id: String) {
+        match self.model.is_generator_folder(&current_workspace, &id) {
+            Ok(is_folder) => println!("Is folder: {is_folder}"),
+            Err(e) => panic!("Generator list clicked error: {e}"),
+        }
         println!("Generator Entry clicked: {current_workspace} - {id}")
     }
 

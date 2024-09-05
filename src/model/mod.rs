@@ -1,5 +1,3 @@
-use core::pat;
-
 use dashboard::Dashboard;
 use thiserror::Error;
 use workspaces::{DashboardFolder, HierarchyElement, Workspace};
@@ -13,6 +11,8 @@ pub enum Error {
     WorkspaceNotFound { name: String },
     #[error("Hierarchy element could not be found: Missing {missing}")]
     HierarchyElementNotFound { missing: String },
+    #[error("Hierarchy element search cannot be executed on empty path")]
+    HierarchyElementEmptyPathSearch,
 }
 
 pub struct Model {
@@ -83,44 +83,69 @@ impl Model {
         }
     }
 
-    pub fn is_generator_folder(&self, workspace: &str, id: &str) -> Result<bool, Error> {
-        let workspace = self
-            .get_workspace(workspace)
-            .ok_or(Error::WorkspaceNotFound {
-                name: workspace.to_string(),
-            })?;
+    pub fn is_generator_folder(&self, workspace_name: &str, id: &str) -> Result<bool, Error> {
+        let element = get_hierarchy_element_from_workspace(&self.workspaces, workspace_name, id)?;
 
-        Ok(true)
-    }
-
-    fn get_workspace(&self, workspace_name: &str) -> Option<&Workspace> {
-        for workspace in &self.workspaces {
-            if workspace.name == workspace_name {
-                Some(workspace);
-            }
+        match element {
+            HierarchyElement::Dashboard(_) => return Ok(false),
+            HierarchyElement::DashboardFolder(_) => return Ok(true),
         }
-        None
     }
+}
+
+fn get_hierarchy_element_from_workspace<'a>(
+    workspaces: &'a Vec<Workspace>,
+    workspace_name: &str,
+    id: &str,
+) -> Result<&'a HierarchyElement, Error> {
+    let workspace = get_workspace(workspaces, workspace_name).ok_or(Error::WorkspaceNotFound {
+        name: workspace_name.to_string(),
+    })?;
+
+    let path = id_to_path(id);
+    let element = get_hierarchy_element(&workspace.hierarchy, path)?
+        .ok_or(Error::HierarchyElementEmptyPathSearch)?;
+
+    return Ok(element);
+}
+
+fn get_workspace<'a>(
+    workspaces: &'a Vec<Workspace>,
+    workspace_name: &str,
+) -> Option<&'a Workspace> {
+    for workspace in workspaces {
+        if workspace.name == workspace_name {
+            Some(workspace);
+        }
+    }
+    None
 }
 
 fn get_hierarchy_element<'a>(
     elements: &'a Vec<HierarchyElement>,
     path: Vec<String>,
-    index: usize,
 ) -> Result<Option<&'a HierarchyElement>, Error> {
-    let element = get_hierarchy_element_by_name(elements, &path[index]).ok_or(
-        Error::HierarchyElementNotFound {
-            missing: path[index].to_string(),
-        },
-    )?;
+    let mut element: Option<&HierarchyElement> = None;
+    let mut child_list = elements;
+    for p in path {
+        if let Some(el) = element {
+            match el {
+                HierarchyElement::Dashboard(_) => {
+                    return Err(Error::HierarchyElementNotFound {
+                        missing: p.to_string(),
+                    })
+                }
+                HierarchyElement::DashboardFolder(fold) => child_list = &fold.hierarchy,
+            }
+        }
+        element = Some(get_hierarchy_element_by_name(&child_list, &p).ok_or(
+            Error::HierarchyElementNotFound {
+                missing: p.to_string(),
+            },
+        )?);
+    }
 
-    Ok(None)
-    // for workspace in &self.workspaces {
-    //     if workspace.name == workspace_name {
-    //         Some(workspace);
-    //     }
-    // }
-    // None
+    Ok(element)
 }
 
 fn get_hierarchy_element_by_name<'a>(
