@@ -2,6 +2,8 @@ use slint::{ModelRc, PlatformError, SharedString, VecModel};
 
 slint::include_modules!();
 
+mod model;
+
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
 
