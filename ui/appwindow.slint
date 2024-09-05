@@ -25,7 +25,7 @@ export component AppWindow inherits Window {
     in-out property <[string]> workspaces;
     in-out property <[HierarchyEntry]> generation_entries;
 
-    callback clicked_generator_entry(string);
+    callback generator_entry_clicked(string);
 
     VerticalLayout {
         MainMenu {}
@@ -40,8 +40,8 @@ export component AppWindow inherits Window {
                     current_workspace <=> current_workspace;
                     workspaces <=> workspaces;
                     generation_entries <=> generation_entries;
-                    clicked_generator_entry(id) => {
-                        root.clicked_generator_entry(id);
+                    generator_entry_clicked(id) => {
+                        root.generator_entry_clicked(id);
                     }
                 }
 
