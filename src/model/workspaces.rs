@@ -1,8 +1,8 @@
 use super::dashboard::Dashboard;
 
 pub struct Workspace {
-    name: String,
-    hierarchy: Vec<HierarchyElement>
+    pub name: String,
+    pub hierarchy: Vec<HierarchyElement>,
 }
 
 pub enum HierarchyElement {
@@ -11,7 +11,7 @@ pub enum HierarchyElement {
 }
 
 pub struct DashboardFolder {
-    name: String,
-    hierarchy: Vec<HierarchyElement>,
-    folded: bool,
+    pub name: String,
+    pub hierarchy: Vec<HierarchyElement>,
+    pub folded: bool,
 }

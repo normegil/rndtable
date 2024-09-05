@@ -1,3 +1,3 @@
 pub struct Dashboard {
-    name: String
+    pub name: String,
 }
