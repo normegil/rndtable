@@ -7,7 +7,9 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.86"
 slint = "1.6"
+thiserror = "1.0.63"
 
 [build-dependencies]
 slint-build = "1.6"

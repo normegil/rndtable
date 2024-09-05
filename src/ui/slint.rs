@@ -42,13 +42,16 @@ impl SlintUI {
 
     fn register_callbacks(slint_ui: Rc<SlintUI>) {
         let clone_slint_ui = slint_ui.clone();
-        slint_ui.ui.on_generator_entry_clicked(move |id| {
-            clone_slint_ui.generator_entry_clicked(id.to_string())
-        });
+        slint_ui
+            .ui
+            .on_generator_entry_clicked(move |current_workspace, id| {
+                clone_slint_ui
+                    .generator_entry_clicked(current_workspace.to_string(), id.to_string())
+            });
     }
 
-    fn generator_entry_clicked(&self, id: String) {
-        println!("Generator Entry clicked: {id}")
+    fn generator_entry_clicked(&self, current_workspace: String, id: String) {
+        println!("Generator Entry clicked: {current_workspace} - {id}")
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {

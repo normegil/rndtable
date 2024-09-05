@@ -4,6 +4,7 @@ slint::include_modules!();
 
 mod model;
 mod ui;
+mod utils;
 
 fn main() -> Result<(), slint::PlatformError> {
     let model = model::Model::new();
