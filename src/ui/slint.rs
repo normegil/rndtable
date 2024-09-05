@@ -42,8 +42,9 @@ impl SlintUI {
 
     fn register_callbacks(slint_ui: Rc<SlintUI>) {
         let clone_slint_ui = slint_ui.clone();
-        slint_ui.ui
-            .on_generator_entry_clicked(move |id| clone_slint_ui.generator_entry_clicked(id.to_string()));
+        slint_ui.ui.on_generator_entry_clicked(move |id| {
+            clone_slint_ui.generator_entry_clicked(id.to_string())
+        });
     }
 
     fn generator_entry_clicked(&self, id: String) {
