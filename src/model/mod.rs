@@ -91,6 +91,14 @@ impl Model {
             HierarchyElement::DashboardFolder(_) => return Ok(true),
         }
     }
+
+    pub fn reverse_folding(&self, workspace_name: &str, id: &str) -> Result<(), Error> {
+        let element = get_hierarchy_element_from_workspace(&self.workspaces, workspace_name, id)?;
+        if let HierarchyElement::DashboardFolder(folder) = element {
+            folder.folded = !folder.folded;
+        }
+        Ok(())
+    }
 }
 
 fn get_hierarchy_element_from_workspace<'a>(
@@ -114,20 +122,20 @@ fn get_workspace<'a>(
     workspace_name: &str,
 ) -> Option<&'a Workspace> {
     for workspace in workspaces {
-        if workspace.name == workspace_name {
-            Some(workspace);
+        if workspace.name == workspace_name.to_string() {
+            return Some(workspace);
         }
     }
     None
 }
 
 fn get_hierarchy_element<'a>(
-    elements: &'a Vec<HierarchyElement>,
+    elements: &'a mut Vec<HierarchyElement>,
     path: Vec<String>,
-) -> Result<Option<&'a HierarchyElement>, Error> {
-    let mut element: Option<&HierarchyElement> = None;
-    let mut child_list = elements;
+) -> Result<Option<&'a mut HierarchyElement>, Error> {
+    let mut element: Option<&mut HierarchyElement> = None;
     for p in path {
+        let mut child_list;
         if let Some(el) = element {
             match el {
                 HierarchyElement::Dashboard(_) => {
@@ -135,10 +143,12 @@ fn get_hierarchy_element<'a>(
                         missing: p.to_string(),
                     })
                 }
-                HierarchyElement::DashboardFolder(fold) => child_list = &fold.hierarchy,
+                HierarchyElement::DashboardFolder(fold) => child_list = &mut fold.hierarchy,
             }
+        } else {
+            child_list = elements;
         }
-        element = Some(get_hierarchy_element_by_name(&child_list, &p).ok_or(
+        element = Some(get_hierarchy_element_by_name(&mut child_list, &p).ok_or(
             Error::HierarchyElementNotFound {
                 missing: p.to_string(),
             },
@@ -148,11 +158,23 @@ fn get_hierarchy_element<'a>(
     Ok(element)
 }
 
+fn get_hierarchy_element2<'a>(
+    elements: &'a mut Vec<HierarchyElement>,
+    path: Vec<String>,
+) -> Result<Option<&'a mut HierarchyElement>, Error> {
+    if path.len() == 1 {
+        
+        return ;
+    } else {
+
+    }
+}
+
 fn get_hierarchy_element_by_name<'a>(
-    elements: &'a Vec<HierarchyElement>,
+    elements: &'a mut Vec<HierarchyElement>,
     name: &str,
-) -> Option<&'a HierarchyElement> {
-    for element in elements {
+) -> Option<&'a mut HierarchyElement> {
+    for element in elements.iter_mut() {
         match element {
             HierarchyElement::Dashboard(dashboard) => {
                 if dashboard.name == name {
