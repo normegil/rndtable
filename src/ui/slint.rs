@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{rc::Rc, sync::RwLock};
 
 use slint::{ModelRc, PlatformError, SharedString, VecModel};
 
@@ -10,29 +10,36 @@ use crate::model::{
 slint::include_modules!();
 
 pub struct SlintUI {
-    model: Model,
+    model: Rc<RwLock<Model>>,
     ui: AppWindow,
 }
 
 impl SlintUI {
-    pub fn new(model: Model) -> Result<Rc<SlintUI>, slint::PlatformError> {
+    pub fn new(model: Model) -> Result<SlintUI, slint::PlatformError> {
         let ui = AppWindow::new()?;
-        let slint_ui = Rc::new(SlintUI { model, ui });
+        let slint_ui = SlintUI {
+            model: Rc::new(RwLock::new(model)),
+            ui,
+        };
         slint_ui.init_data()?;
-        SlintUI::register_callbacks(slint_ui.clone());
+        slint_ui.register_callbacks();
         Ok(slint_ui)
     }
 
     fn init_data(&self) -> Result<(), slint::PlatformError> {
-        let current_workspace = self
+        let model_read = self
             .model
+            .read()
+            .expect("Model should be readable during initialization");
+
+        let current_workspace = model_read
             .workspaces
             .get(0)
             .ok_or(PlatformError::Other("Test".to_string()))?;
         let current_workspace_name = current_workspace.name.as_str();
 
         self.ui
-            .set_workspaces(to_workspace_model(&self.model.workspaces));
+            .set_workspaces(to_workspace_model(&model_read.workspaces));
         self.ui
             .set_current_workspace(SharedString::from(current_workspace_name));
         self.ui
@@ -40,22 +47,36 @@ impl SlintUI {
         Ok(())
     }
 
-    fn register_callbacks(slint_ui: Rc<SlintUI>) {
-        let clone_slint_ui = slint_ui.clone();
-        slint_ui
-            .ui
-            .on_generator_entry_clicked(move |current_workspace, id| {
-                clone_slint_ui
-                    .generator_entry_clicked(current_workspace.to_string(), id.to_string())
+    fn register_callbacks(&self) {
+        let model_clone = Rc::downgrade(&self.model);
+        let ui = self.ui.as_weak();
+        self.ui
+            .on_generator_entry_clicked(move |current_workspace, id, is_folder| {
+                if is_folder {
+                    let model = model_clone
+                        .upgrade()
+                        .expect("Model should not be dropped before the end of the program");
+                    {
+                        model
+                            .write()
+                            .expect("Model is not writable, but a menu need to be fold")
+                            .reverse_folding(&current_workspace, &id)
+                            .expect("Could not fold/unfold folder");
+                    }
+                    let model_read = model.read().expect("Model should be readable");
+                    ui.upgrade()
+                        .expect("UI should not be dropped before the end of the program")
+                        .set_generation_entries(to_entries_model(
+                            &model_read
+                                .get_current_workspace()
+                                .expect("Current workspace not found - should not happen")
+                                .hierarchy,
+                        ))
+                } else {
+                    todo!("Display content of dashboard in a new tab");
+                }
+                println!("Generator Entry clicked: {current_workspace} - {id}")
             });
-    }
-
-    fn generator_entry_clicked(&self, current_workspace: String, id: String) {
-        match self.model.is_generator_folder(&current_workspace, &id) {
-            Ok(is_folder) => ,
-            Err(e) => panic!("Generator list clicked error: {e}"),
-        }
-        println!("Generator Entry clicked: {current_workspace} - {id}")
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {

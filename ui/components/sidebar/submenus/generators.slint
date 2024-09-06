@@ -9,7 +9,7 @@ export component GeneratorsSubMenu inherits SubMenu {
     in-out property <[string]> workspaces;
     in-out property <[HierarchyEntry]> entries;
 
-    callback clicked_entry(string);
+    callback clicked_entry(string, bool);
 
     title: "GENERATORS";
 
@@ -30,8 +30,8 @@ export component GeneratorsSubMenu inherits SubMenu {
     ScrollView {
          Hierarchy {
             entries <=> entries;
-            clicked_entry(id) => {
-                root.clicked_entry(id);
+            clicked_entry(id, is-folder) => {
+                root.clicked_entry(id, is-folder);
             }
          }
     }

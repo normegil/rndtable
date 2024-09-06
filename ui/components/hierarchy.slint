@@ -10,13 +10,13 @@ export struct HierarchyEntry {
 component HierarchyElement inherits Rectangle {
     in-out property <HierarchyEntry> entry;
 
-    callback clicked(string);
+    callback clicked(string, bool);
 
     height: 25px;
 
     ta := TouchArea {
         clicked => {
-            root.clicked(entry.id);
+            root.clicked(entry.id, entry.is-folder);
         }
     }
     
@@ -38,14 +38,14 @@ component HierarchyElement inherits Rectangle {
 export component Hierarchy inherits Rectangle {
     in-out property <[HierarchyEntry]> entries;
 
-    callback clicked_entry(string);
+    callback clicked_entry(string, bool);
 
     VerticalLayout {
         for entry in entries: HierarchyElement {
             width: parent.width;
             entry: entry;
-            clicked(id) => {
-                root.clicked_entry(id)
+            clicked(id, is-folder) => {
+                root.clicked_entry(id, is-folder)
             }
         }
     }
