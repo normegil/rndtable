@@ -99,6 +99,10 @@ impl Model {
         Ok(())
     }
 
+    pub fn set_current_workspace(&mut self, workspace_name: &str) {
+        self.current_workspace_name = workspace_name.to_string();
+    }
+
     fn get_workspace<'a>(&'a self, workspace_name: &str) -> Option<&'a Workspace> {
         for workspace in &self.workspaces {
             if workspace.name == workspace_name.to_string() {
