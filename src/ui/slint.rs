@@ -3,7 +3,7 @@ use std::{rc::Rc, sync::RwLock};
 use slint::{ModelRc, PlatformError, SharedString, VecModel};
 
 use crate::model::{
-    workspaces::{self, HierarchyElement, Workspace},
+    workspaces::{HierarchyElement, Workspace},
     Model,
 };
 

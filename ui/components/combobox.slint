@@ -6,7 +6,7 @@ export component CustomComboBox inherits Rectangle {
 
     callback selected(string);
 
-    height: 20px;
+    height: 24px;
     border-color: Palette.borders;
     border-width: 1px;
 
@@ -34,11 +34,13 @@ export component CustomComboBox inherits Rectangle {
         Text {
             text: root.active_option;
             font-size: 14px;
+            font-family: "Lora";
         }
 
         Text {
             text: "";
-            font-size: 14px;
+            font-size: 16px;
+            font-family: "lineicons";
         }
     }
 
@@ -54,14 +56,15 @@ export component CustomComboBox inherits Rectangle {
 
                 VerticalLayout {
                     for instance in model: Rectangle {
-                        height: 20px;
+                        height: 28px;
                         width: root.width - 2px;
             
                         Text {
                             x: 10px;
         
                             text: instance;
-                            font-size: 14px;
+                            font-family: "Lora";
+                            font-size: 16px;
                         }
             
                         thista := TouchArea {

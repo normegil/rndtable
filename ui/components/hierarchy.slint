@@ -12,7 +12,7 @@ component HierarchyElement inherits Rectangle {
 
     callback clicked(string, bool);
 
-    height: 25px;
+    height: 26px;
 
     ta := TouchArea {
         clicked => {
@@ -23,6 +23,8 @@ component HierarchyElement inherits Rectangle {
     Text {
         x: 15px + (10px * entry.identation);
         text: (entry.is_folder ? entry.folded ? " " : " " : " ") + entry.title;
+        font-family: "Lora";
+        font-size: 14px;
     }
 
     states [
