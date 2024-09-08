@@ -3,6 +3,7 @@ use std::{rc::Rc, sync::RwLock};
 use slint::{ModelRc, PlatformError, SharedString, VecModel};
 
 use crate::model::{
+    filters::Filter,
     workspaces::{HierarchyElement, Workspace},
     Model,
 };
@@ -44,6 +45,9 @@ impl SlintUI {
             .set_current_workspace(SharedString::from(current_workspace_name));
         self.ui
             .set_generation_entries(to_entries_model(&current_workspace.hierarchy));
+
+        self.ui.set_filters(to_ui_filters(&model_read.filter_list));
+
         Ok(())
     }
 
@@ -102,6 +106,28 @@ impl SlintUI {
                         .hierarchy,
                 ))
         });
+
+        let model_clone = Rc::downgrade(&self.model);
+        let ui_clone = self.ui.as_weak();
+        self.ui.on_filter_searched_tags(move |searched| {
+            let model = model_clone
+                .upgrade()
+                .expect("Model should not be dropped before the end of the program");
+            let model_read = model.read().expect("Model should be readable");
+            let filtered_filters: Vec<FilterEntry> = model_read
+                .filter_list
+                .iter()
+                .filter(|f| f.name.contains(searched.as_str()))
+                .map(|f| FilterEntry {
+                    name: SharedString::from(f.name.to_string()),
+                    enable: f.enabled,
+                })
+                .collect();
+            ui_clone
+                .upgrade()
+                .expect("UI should not be dropped before the end of the program")
+                .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
+        });
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {
@@ -126,6 +152,18 @@ fn to_entries_model(entries: &Vec<HierarchyElement>) -> ModelRc<HierarchyEntry> 
 
     let tmp = VecModel::from(hierarchy_entry);
     ModelRc::new(tmp)
+}
+
+fn to_ui_filters(filters: &Vec<Filter>) -> ModelRc<FilterEntry> {
+    let filters_entry: Vec<FilterEntry> = filters
+        .iter()
+        .map(|f| FilterEntry {
+            name: SharedString::from(f.name.to_string()),
+            enable: f.enabled,
+        })
+        .collect();
+    let filter_entries = VecModel::from(filters_entry);
+    ModelRc::new(filter_entries)
 }
 
 fn flatten_entry(

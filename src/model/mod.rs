@@ -1,8 +1,10 @@
 use dashboard::Dashboard;
+use filters::Filter;
 use thiserror::Error;
 use workspaces::{DashboardFolder, HierarchyElement, Workspace};
 
 pub mod dashboard;
+pub mod filters;
 pub mod workspaces;
 
 #[derive(Debug, Error)]
@@ -16,11 +18,26 @@ pub enum Error {
 pub struct Model {
     pub current_workspace_name: String,
     pub workspaces: Vec<Workspace>,
+    pub filter_list: Vec<Filter>,
 }
 
 impl Model {
     pub fn new() -> Model {
         Model {
+            filter_list: vec![
+                Filter {
+                    name: "nsfw".to_string(),
+                    enabled: false,
+                },
+                Filter {
+                    name: "fantasy".to_string(),
+                    enabled: false,
+                },
+                Filter {
+                    name: "scifi".to_string(),
+                    enabled: false,
+                },
+            ],
             current_workspace_name: "Cyberpunk RED".to_string(),
             workspaces: vec![
                 Workspace {

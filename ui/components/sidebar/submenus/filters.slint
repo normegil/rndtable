@@ -1,19 +1,53 @@
 import { SubMenu } from "../submenu.slint";
 import { Textbox } from "../../textbox.slint";
-import { LineEdit } from "std-widgets.slint";
+import { LineEdit, ScrollView } from "std-widgets.slint";
 import { SearchAutoComplete } from "../../search.slint";
+
+export struct FilterEntry {
+    name: string,
+    enable: bool,
+}
+
+component FilterDisplay inherits Rectangle {
+    in-out property <FilterEntry> filter;
+
+    height: 25px;
+
+    Text {
+        x: 15px;
+        font-size: 14px;
+        font-family: "Lora";
+        text: filter.name;
+    }
+}
+
 export component FiltersSubMenu inherits SubMenu {
     title: "FILTERS";
+
+    in-out property <[FilterEntry]> filters;
 
     callback filter_searched_tags(string);
 
     Rectangle {
-        height: 26px;
+        height: 30px;
 
-        SearchAutoComplete {
+        Textbox {
+            icon: "";
             width: parent.width - 20px;
-            filter_searched_tags(searched) => {
+            edited(searched) => {
+                debug(searched);
+                debug(filters.length);
                 root.filter_searched_tags(searched);
+            }
+        }
+    }
+
+    ScrollView {
+
+        VerticalLayout {
+
+            for filter in filters: FilterDisplay {
+                filter: filter;
             }
         }
     }
