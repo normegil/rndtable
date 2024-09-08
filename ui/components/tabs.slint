@@ -1,5 +1,12 @@
 import { BorderHorizontal, BorderVertical } from "borders.slint";
 import { Palette } from "../palette.slint";
+
+export struct TabData {
+    workspace_name: string,
+    id: string,
+    name: string,
+}
+
 component TabButton inherits Rectangle {
     in-out property <string> title;
     in-out property <bool> active;
@@ -72,13 +79,13 @@ component TabButton inherits Rectangle {
 
 export component Tabs inherits VerticalLayout {
     property <int> active_tab;
-    in-out property <[string]> tabs;
+    in-out property <[TabData]> tabs;
 
     HorizontalLayout {
         height: 40px;
 
         for tab[i] in tabs: TabButton {
-            title: tab;
+            title: tab.name;
             height: parent.height;
             active: i == active_tab;
             clicked => {

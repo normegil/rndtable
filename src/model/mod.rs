@@ -205,7 +205,7 @@ fn get_hierarchy_element_by_name<'a>(
     None
 }
 
-fn id_to_path(id: &str) -> Vec<String> {
+pub fn id_to_path(id: &str) -> Vec<String> {
     id.split("/")
         .filter(|s| !s.is_empty())
         .map(|s| s.to_string())

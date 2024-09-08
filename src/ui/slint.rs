@@ -82,15 +82,22 @@ impl SlintUI {
                         .upgrade()
                         .expect("UI should not be dropped before the end of the program")
                         .get_tabs();
-                    let mut tabs = tabs_rc
+                    let tabs = tabs_rc
                         .as_any()
-                        .downcast_ref::<VecModel<SharedString>>()
+                        .downcast_ref::<VecModel<TabData>>()
                         .expect("We know we set a VecModel earlier");
-                    tabs.push(id.to_string().into());
-
-                    // todo!("Display content of dashboard in a new tab");
+                    
+                    let found_tabs: Vec<TabData> = tabs.iter().filter(|t| t.workspace_name == current_workspace && t.id == &id).collect();
+                    
+                    if found_tabs.len() == 0 {
+                        let path = model::id_to_path(&id);
+                        tabs.push(TabData {
+                            workspace_name: current_workspace.to_string().into(),
+                            id: id.to_string().into(),
+                            name: path[path.len() - 1].to_string().into(),
+                        });
+                    }
                 }
-                println!("Generator Entry clicked: {current_workspace} - {id}")
             });
 
         let model_clone = Rc::downgrade(&self.model);
