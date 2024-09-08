@@ -1,0 +1,65 @@
+import { Textbox } from "textbox.slint";
+import { BorderVertical, BorderHorizontal } from "borders.slint";
+import { Palette } from "../palette.slint";
+
+export component SearchAutoComplete inherits Textbox {
+    in-out property <[string]> options;
+
+    callback filter_searched_tags(string);
+
+    edited(searched) => {
+        if searched >= 3 {
+            filter_searched_tags(searched);
+            popup.show();
+        } else {
+            popup.close();
+        }
+    }
+
+    popup := PopupWindow {
+        width: root.width;
+        height: 50px;
+
+        y: root.y + root.height;
+
+        VerticalLayout {
+            HorizontalLayout {
+                BorderVertical {}
+
+                VerticalLayout {
+                    for option in options: Rectangle {
+                        height: 28px;
+                        width: root.width - 2px;
+            
+                        Text {
+                            x: 10px;
+        
+                            text: option;
+                            font-family: "Lora";
+                            font-size: 16px;
+                        }
+            
+                        thista := TouchArea {
+                            clicked => {
+                                
+                            }
+                        }
+        
+                        states [
+                            hovered when thista.has-hover: {
+                                background: Palette.background-main;
+                            }
+                            not-hovered when !thista.has-hover: {
+                                background: Palette.background-secondary;
+                            }
+                        ]
+                    }
+                }
+
+                BorderVertical {}
+            }
+
+            BorderHorizontal {}
+        }
+    }
+}

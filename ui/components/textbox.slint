@@ -8,6 +8,9 @@ export component Textbox inherits Rectangle {
     property <bool> placeholder: true;
     property <bool> active: false;
 
+    callback accepted(string);
+    callback edited(string);
+
     height: 24px;
     border-color: Palette.borders;
     border-width: 1px;
@@ -43,6 +46,14 @@ export component Textbox inherits Rectangle {
             font-size: 14px;
             font-family: "Lora";
             text: root.text;
+
+            accepted => {
+                root.accepted(self.text);
+            }
+
+            edited => {
+                root.edited(self.text);
+            }
         }
 
         if root.icon != "" : Text {
