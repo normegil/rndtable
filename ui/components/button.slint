@@ -1,0 +1,47 @@
+import { Palette } from "../palette.slint";
+
+export component Button inherits Rectangle {
+
+    in-out property <string> text;
+
+    callback clicked();
+
+    property <bool> pressed: false;
+
+    height: 24px;
+    border-color: Palette.borders;
+    border-width: 1px;
+
+    ta := TouchArea {
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down) {
+                pressed = true;
+            } else if (event.kind == PointerEventKind.up) {
+                pressed = false;
+            }
+        }
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    Text {
+        text: root.text;
+        font-size: 14px;
+        font-family: "Lora";
+    }
+
+    states [
+        pressed when pressed: {
+            background: Palette.background-main;
+            border-color: Palette.primary;   
+        }
+        hovered when ta.has-hover: {
+            background: Palette.background-main;
+        }
+        not-hovered when !ta.has-hover: {
+            background: Palette.background-secondary;
+        }
+    ]
+    
+}

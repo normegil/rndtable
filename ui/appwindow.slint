@@ -38,6 +38,7 @@ export component AppWindow inherits Window {
     callback workspace_changed(string);
     callback filter_searched_tags(string);
     callback reverse_filter_activation(string);
+    callback reset_filters(string);
 
     VerticalLayout {
         MainMenu {}
@@ -64,6 +65,9 @@ export component AppWindow inherits Window {
                     }
                     reverse_filter_activation(filter_name) => {
                         root.reverse_filter_activation(filter_name);
+                    }
+                    reset_filters(current_searched) => {
+                        root.reset_filters(current_searched);
                     }
                 }
 

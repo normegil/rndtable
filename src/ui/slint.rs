@@ -141,10 +141,40 @@ impl SlintUI {
                 for filter in model_write.filter_list.iter_mut() {
                     if filter.name == filter_name.to_string() {
                         filter.enabled = !filter.enabled;
-                        println!("Filter {}: {}", filter.name, filter.enabled);
                     }
                 }
             }
+        });
+
+        let model_clone = Rc::downgrade(&self.model);
+        let ui_clone = self.ui.as_weak();
+        self.ui.on_reset_filters(move |current_searched| {
+            let model = model_clone
+                .upgrade()
+                .expect("Model should not be dropped before the end of the program");
+            {
+                let mut model_write = model
+                    .write()
+                    .expect("Model is not writable, but a menu need to be fold");
+                for filter in model_write.filter_list.iter_mut() {
+                    filter.enabled = false;
+                }
+            }
+            println!("{}", current_searched);
+            let model_read = model.read().expect("Model should be readable");
+            let filtered_filters: Vec<FilterEntry> = model_read
+                .filter_list
+                .iter()
+                .filter(|f| f.name.contains(current_searched.as_str()))
+                .map(|f| FilterEntry {
+                    name: SharedString::from(f.name.to_string()),
+                    enable: f.enabled,
+                })
+                .collect();
+            ui_clone
+                .upgrade()
+                .expect("UI should not be dropped before the end of the program")
+                .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
         });
     }
 

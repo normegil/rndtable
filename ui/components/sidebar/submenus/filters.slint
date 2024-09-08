@@ -2,6 +2,7 @@ import { SubMenu } from "../submenu.slint";
 import { Textbox } from "../../textbox.slint";
 import { LineEdit, ScrollView, Switch } from "std-widgets.slint";
 import { SearchAutoComplete } from "../../search.slint";
+import { Button } from "../../button.slint";
 
 export struct FilterEntry {
     name: string,
@@ -40,20 +41,40 @@ export component FiltersSubMenu inherits SubMenu {
     title: "FILTERS";
 
     in-out property <[FilterEntry]> filters;
+    property <string> searched;
 
     callback filter_searched_tags(string);
     callback reverse_filter_activation(string);
+    callback reset_filters(string);
 
     Rectangle {
-        height: 30px;
+        height: 26px;
 
         Textbox {
             icon: "";
             width: parent.width - 20px;
+            text <=> searched;
             edited(searched) => {
                 root.filter_searched_tags(searched);
             }
         }
+    }
+
+    Rectangle {
+        height: 10px;
+    }
+
+    Button {
+        x: 10px;
+        width: parent.width - 20px;
+        text: "Reset all filters";
+        clicked => {
+            root.reset_filters(root.searched);
+        }
+    }
+
+    Rectangle {
+        height: 10px;
     }
 
     ScrollView {

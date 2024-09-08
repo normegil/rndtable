@@ -45,7 +45,7 @@ export component Textbox inherits Rectangle {
             single-line: true;
             font-size: 14px;
             font-family: "Lora";
-            text: root.text;
+            text <=> root.text;
 
             accepted => {
                 root.accepted(self.text);

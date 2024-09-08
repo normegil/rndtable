@@ -21,6 +21,7 @@ export component Sidebar inherits Rectangle {
     callback workspace_changed(string);
     callback filter_searched_tags(string);
     callback reverse_filter_activation(string);
+    callback reset_filters(string);
 
     HorizontalLayout {
         SidebarMenu {
@@ -61,6 +62,9 @@ export component Sidebar inherits Rectangle {
                 }
                 reverse_filter_activation(filter_name) => {
                     root.reverse_filter_activation(filter_name);
+                }
+                reset_filters(current_searched) => {
+                    root.reset_filters(current_searched);
                 }
             }
             settings-menu := SettingsSubMenu {
