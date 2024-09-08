@@ -74,7 +74,6 @@ export component Sidebar inherits Rectangle {
 
         BorderVerticalResize {
             border-left-color: Palette.background-main;
-            border-right-color: Palette.background-secondary;
             size: resizable-border-displayed ? 1px : 0px;
             resize(movement) => {
                 if (root.submenu-size + movement < 169px) {

@@ -1,0 +1,23 @@
+import { BorderHorizontal } from "borders.slint";
+import { Palette } from "../palette.slint";
+component TabButton {
+    
+}
+
+export component Tabs inherits VerticalLayout {
+    HorizontalLayout {
+        height: 40px;
+
+        Rectangle {
+            background: Palette.background-main;
+
+            BorderHorizontal {
+                y: parent.height - 1px;
+            }
+        }
+    }
+
+    Rectangle {
+        background: Palette.background-secondary;
+    }
+}

@@ -11,12 +11,11 @@ export component BorderVertical inherits Rectangle {
 export component BorderVerticalResize inherits Rectangle {
     in-out property <length> size: 1px;
     in property <color> border-left-color;
-    in property <color> border-right-color;
 
     callback resize(length);
     
     y: 0;
-    width: size != 0 ? 4px + size : 0px;
+    width: size != 0 ? 2px + size : 0px;
 
     touch := TouchArea {
         mouse-cursor: ew-resize;
@@ -27,11 +26,9 @@ export component BorderVerticalResize inherits Rectangle {
             if (event.kind == PointerEventKind.down) {
                 left.background = Palette.primary;
                 border.background = Palette.primary;
-                right.background = Palette.primary;
             } else if (event.kind == PointerEventKind.up) {
                 left.background = border-left-color;
                 border.background = Palette.borders;
-                right.background = border-right-color;
             }
         }
     }
@@ -46,12 +43,6 @@ export component BorderVerticalResize inherits Rectangle {
         x: 1px;
         width <=> size;
         background: Palette.borders;
-    }
-
-    right := Rectangle {
-        x: 1px + size;
-        width: 2px;
-        background: border-right-color;
     }
 }
 
