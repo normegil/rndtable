@@ -26,6 +26,14 @@ component TabButton inherits Rectangle {
             text <=> root.title;
             font-size: 14px;
             font-family: "Lora";
+            states [
+                active when root.active: {
+                    color: Palette.text;
+                }
+                inactive when !root.active: {
+                    color: Palette.text-inactive;
+                }
+            ]
         }
 
         BorderVertical {}
@@ -49,18 +57,27 @@ component TabButton inherits Rectangle {
 }
 
 export component Tabs inherits VerticalLayout {
+    in-out property <int> active_tab;
+
     HorizontalLayout {
         height: 40px;
 
         TabButton {
             title: "Tab 1";
             height: parent.height;
-            active: true;
+            active: 0 == active_tab;
+            clicked => {
+                active_tab = 0;
+            }
         }
 
         TabButton {
             title: "Tab 2";
             height: parent.height;
+            active: 1 == active_tab;
+            clicked => {
+                active_tab = 1;
+            }
         }
 
         Rectangle {
