@@ -78,17 +78,17 @@ impl SlintUI {
                                 .hierarchy,
                         ))
                 } else {
-                    let tabs_rc = ui_clone
-                        .upgrade()
-                        .expect("UI should not be dropped before the end of the program")
+                    let ui = ui_clone
+                    .upgrade()
+                    .expect("UI should not be dropped before the end of the program");
+                    let tabs_rc = ui
                         .get_tabs();
                     let tabs = tabs_rc
                         .as_any()
                         .downcast_ref::<VecModel<TabData>>()
                         .expect("We know we set a VecModel earlier");
-                    
-                    let found_tabs: Vec<TabData> = tabs.iter().filter(|t| t.workspace_name == current_workspace && t.id == &id).collect();
-                    
+                    let found_tabs: Vec<(usize, TabData)> = tabs.iter().enumerate().filter(|(_, t)| t.workspace_name == current_workspace && t.id == &id).collect();
+                    let mut active_tab = tabs.row_count();
                     if found_tabs.len() == 0 {
                         let path = model::id_to_path(&id);
                         tabs.push(TabData {
@@ -96,7 +96,13 @@ impl SlintUI {
                             id: id.to_string().into(),
                             name: path[path.len() - 1].to_string().into(),
                         });
+                    } else {
+                        active_tab = found_tabs.get(0)
+                        .expect("Found tabs should not be empty at this point - Checked ina previous condition")
+                        .0;
                     }
+                    ui.set_active_tab(active_tab.try_into()
+                        .expect("Usize to i32 conversion should work"));
                 }
             });
 
