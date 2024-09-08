@@ -6,7 +6,7 @@ component TabButton inherits Rectangle {
 
     callback clicked();
 
-    width: 100px;
+    width: 150px;
 
     ta := TouchArea {
         clicked => {
@@ -18,11 +18,11 @@ component TabButton inherits Rectangle {
         background: Palette.primary;
     }
 
-    HorizontalLayout {
-        padding-left: 15px;
-        
+    Rectangle {
         Text {
+            x: 15px;
             y: 11px;
+            width: parent.width - 45px;
             text <=> root.title;
             font-size: 14px;
             font-family: "Lora";
@@ -36,7 +36,21 @@ component TabButton inherits Rectangle {
             ]
         }
 
-        BorderVertical {}
+        Text {
+            x: parent.width - 25px;
+            y: 15px;
+            font-size: 10px;
+            font-family: "lineicons";
+            text: "";
+
+            close-ta := TouchArea {
+                
+            }
+        }
+
+        BorderVertical {
+            x: parent.width - 1px;
+        }
     }
 
     if !active: BorderHorizontal {
@@ -57,13 +71,14 @@ component TabButton inherits Rectangle {
 }
 
 export component Tabs inherits VerticalLayout {
-    in-out property <int> active_tab;
+    property <int> active_tab;
+    in-out property <string> tab_names;
 
     HorizontalLayout {
         height: 40px;
 
         TabButton {
-            title: "Tab 1";
+            title: "Tab 1 aaaaaaaaaaaaaaaaaaaaa";
             height: parent.height;
             active: 0 == active_tab;
             clicked => {
