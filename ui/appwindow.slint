@@ -42,6 +42,7 @@ export component AppWindow inherits Window {
     callback filter_searched_tags(string);
     callback reverse_filter_activation(string);
     callback reset_filters(string);
+    callback close-tab(TabData);
 
     VerticalLayout {
         MainMenu {}
@@ -77,6 +78,9 @@ export component AppWindow inherits Window {
                 content := Tabs {
                     active_tab <=> active_tab;
                     tabs <=> tabs;
+                    close-tab(tab-data) => {
+                        root.close-tab(tab-data);
+                    }
                 }
             }
         }

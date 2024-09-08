@@ -199,6 +199,25 @@ impl SlintUI {
                 .expect("UI should not be dropped before the end of the program")
                 .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
         });
+        let ui_clone = self.ui.as_weak();
+        self.ui.on_close_tab(move |data| {
+            let ui = ui_clone
+                    .upgrade()
+                    .expect("UI should not be dropped before the end of the program");
+            let tabs_rc = ui
+                .get_tabs();
+            let tabs = tabs_rc
+                .as_any()
+                .downcast_ref::<VecModel<TabData>>()
+                .expect("We know we set a VecModel earlier");
+            let found_tabs: Vec<(usize, TabData)> = tabs.iter().enumerate().filter(|(_, t)| t.workspace_name == data.workspace_name && t.id == &data.id).collect();
+            if found_tabs.len() != 0 {
+                let index = found_tabs.get(0)
+                .expect("Found tabs should not be empty at this point - Checked ina previous condition")
+                .0;
+                tabs.remove(index);
+            }
+        });
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {
