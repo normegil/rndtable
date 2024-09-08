@@ -14,10 +14,17 @@ component TabButton inherits Rectangle {
         }
     }
 
+    if root.active: BorderHorizontal {
+        background: Palette.primary;
+    }
+
     HorizontalLayout {
+        padding-left: 15px;
+        
         Text {
+            y: 11px;
             text <=> root.title;
-            font-size: 16px;
+            font-size: 14px;
             font-family: "Lora";
         }
 
@@ -29,6 +36,9 @@ component TabButton inherits Rectangle {
     }
 
     states [
+        active when self.active: {
+            background: Palette.background-secondary;
+        }
         hovered when ta.has-hover: {
             background: Palette.background-secondary;
         }
@@ -43,10 +53,13 @@ export component Tabs inherits VerticalLayout {
         height: 40px;
 
         TabButton {
+            title: "Tab 1";
             height: parent.height;
+            active: true;
         }
 
         TabButton {
+            title: "Tab 2";
             height: parent.height;
         }
 
