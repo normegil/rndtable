@@ -1,22 +1,22 @@
 use std::{rc::Rc, sync::RwLock};
 
-use slint::{ModelRc, PlatformError, SharedString, VecModel};
+use slint::{Model, ModelRc, PlatformError, SharedString, VecModel};
 
 use crate::model::{
+    self,
     filters::Filter,
     workspaces::{HierarchyElement, Workspace},
-    Model,
 };
 
 slint::include_modules!();
 
 pub struct SlintUI {
-    model: Rc<RwLock<Model>>,
+    model: Rc<RwLock<model::Model>>,
     ui: AppWindow,
 }
 
 impl SlintUI {
-    pub fn new(model: Model) -> Result<SlintUI, slint::PlatformError> {
+    pub fn new(model: model::Model) -> Result<SlintUI, slint::PlatformError> {
         let ui = AppWindow::new()?;
         let slint_ui = SlintUI {
             model: Rc::new(RwLock::new(model)),
@@ -78,7 +78,17 @@ impl SlintUI {
                                 .hierarchy,
                         ))
                 } else {
-                    todo!("Display content of dashboard in a new tab");
+                    let tabs_rc = ui_clone
+                        .upgrade()
+                        .expect("UI should not be dropped before the end of the program")
+                        .get_tabs();
+                    let mut tabs = tabs_rc
+                        .as_any()
+                        .downcast_ref::<VecModel<SharedString>>()
+                        .expect("We know we set a VecModel earlier");
+                    tabs.push(id.to_string().into());
+
+                    // todo!("Display content of dashboard in a new tab");
                 }
                 println!("Generator Entry clicked: {current_workspace} - {id}")
             });

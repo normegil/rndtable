@@ -72,26 +72,17 @@ component TabButton inherits Rectangle {
 
 export component Tabs inherits VerticalLayout {
     property <int> active_tab;
-    in-out property <string> tab_names;
+    in-out property <[string]> tabs;
 
     HorizontalLayout {
         height: 40px;
 
-        TabButton {
-            title: "Tab 1 aaaaaaaaaaaaaaaaaaaaa";
+        for tab[i] in tabs: TabButton {
+            title: tab;
             height: parent.height;
-            active: 0 == active_tab;
+            active: i == active_tab;
             clicked => {
-                active_tab = 0;
-            }
-        }
-
-        TabButton {
-            title: "Tab 2";
-            height: parent.height;
-            active: 1 == active_tab;
-            clicked => {
-                active_tab = 1;
+                active_tab = i;
             }
         }
 
