@@ -1,4 +1,16 @@
 import { SubMenu } from "../submenu.slint";
+import { Textbox } from "../../textbox.slint";
+import { LineEdit } from "std-widgets.slint";
 export component FiltersSubMenu inherits SubMenu {
     title: "FILTERS";
+
+    Rectangle {
+        height: 26px;
+
+        Textbox {
+            width: parent.width - 20px;
+            text: "";
+            icon: "";
+        }
+    }
 }

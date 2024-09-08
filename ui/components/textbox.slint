@@ -1,0 +1,54 @@
+import { Palette } from "../palette.slint";
+
+export component Textbox inherits Rectangle {
+
+    in-out property <string> text;
+    in-out property <string> icon;
+
+    property <bool> placeholder: true;
+    property <bool> active: false;
+
+    height: 24px;
+    border-color: Palette.borders;
+    border-width: 1px;
+
+    ta := TouchArea {
+        clicked => {
+            root.active = true;
+            input.focus()
+        }
+    }
+
+    states [
+        active when root.active: {
+            border-color: Palette.primary;
+        }
+        hovered when !root.active && ta.has-hover: {
+            background: Palette.background-main;
+        }
+        not-hovered when !ta.has-hover: {
+            background: Palette.background-secondary;
+        }
+    ]
+
+    HorizontalLayout {
+        alignment: LayoutAlignment.space-between;
+        padding-top: 2px;
+        padding-bottom <=> self.padding-top;
+        padding-left: 10px;
+        padding-right <=> self.padding-left;
+
+        input := TextInput {
+            single-line: true;
+            font-size: 14px;
+            font-family: "Lora";
+            text: root.text;
+        }
+
+        if root.icon != "" : Text {
+            text: root.icon;
+            font-size: 16px;
+            font-family: "lineicons";
+        }
+    }
+}
