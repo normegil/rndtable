@@ -1,16 +1,20 @@
 import { SubMenu } from "../submenu.slint";
 import { Textbox } from "../../textbox.slint";
 import { LineEdit } from "std-widgets.slint";
+import { SearchAutoComplete } from "../../search.slint";
 export component FiltersSubMenu inherits SubMenu {
     title: "FILTERS";
+
+    callback filter_searched_tags(string);
 
     Rectangle {
         height: 26px;
 
-        Textbox {
+        SearchAutoComplete {
             width: parent.width - 20px;
-            text: "";
-            icon: "";
+            filter_searched_tags(searched) => {
+                root.filter_searched_tags(searched);
+            }
         }
     }
 }

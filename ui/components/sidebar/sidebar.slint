@@ -18,6 +18,7 @@ export component Sidebar inherits Rectangle {
     
     callback generator_entry_clicked(string, string, bool);
     callback workspace_changed(string);
+    callback filter_searched_tags(string);
 
     HorizontalLayout {
         SidebarMenu {
@@ -52,6 +53,9 @@ export component Sidebar inherits Rectangle {
             }
             filters-menu := FiltersSubMenu {
                 visible: current-menu == Menu.Filters;
+                filter_searched_tags(searched) => {
+                    root.filter_searched_tags(searched);
+                }
             }
             settings-menu := SettingsSubMenu {
                 visible: current-menu == Menu.Settings;

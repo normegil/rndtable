@@ -7,6 +7,9 @@ export component SearchAutoComplete inherits Textbox {
 
     callback filter_searched_tags(string);
 
+    text: "";
+    icon: "";
+
     edited(searched) => {
         if searched >= 3 {
             filter_searched_tags(searched);
