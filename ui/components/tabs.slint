@@ -1,16 +1,57 @@
-import { BorderHorizontal } from "borders.slint";
+import { BorderHorizontal, BorderVertical } from "borders.slint";
 import { Palette } from "../palette.slint";
-component TabButton {
-    
+component TabButton inherits Rectangle {
+    in-out property <string> title;
+    in-out property <bool> active;
+
+    callback clicked();
+
+    width: 100px;
+
+    ta := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    HorizontalLayout {
+        Text {
+            text <=> root.title;
+            font-size: 16px;
+            font-family: "Lora";
+        }
+
+        BorderVertical {}
+    }
+
+    if !active: BorderHorizontal {
+        y: parent.height - 1px;
+    }
+
+    states [
+        hovered when ta.has-hover: {
+            background: Palette.background-secondary;
+        }
+        not-hovered when !ta.has-hover: {
+            background: Palette.background-main;
+        }
+    ]
 }
 
 export component Tabs inherits VerticalLayout {
     HorizontalLayout {
         height: 40px;
 
+        TabButton {
+            height: parent.height;
+        }
+
+        TabButton {
+            height: parent.height;
+        }
+
         Rectangle {
             background: Palette.background-main;
-
             BorderHorizontal {
                 y: parent.height - 1px;
             }
