@@ -128,6 +128,24 @@ impl SlintUI {
                 .expect("UI should not be dropped before the end of the program")
                 .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
         });
+
+        let model_clone = Rc::downgrade(&self.model);
+        self.ui.on_reverse_filter_activation(move |filter_name| {
+            let model = model_clone
+                .upgrade()
+                .expect("Model should not be dropped before the end of the program");
+            {
+                let mut model_write = model
+                    .write()
+                    .expect("Model is not writable, but a menu need to be fold");
+                for filter in model_write.filter_list.iter_mut() {
+                    if filter.name == filter_name.to_string() {
+                        filter.enabled = !filter.enabled;
+                        println!("Filter {}: {}", filter.name, filter.enabled);
+                    }
+                }
+            }
+        });
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {

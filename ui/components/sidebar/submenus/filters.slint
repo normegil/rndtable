@@ -1,6 +1,6 @@
 import { SubMenu } from "../submenu.slint";
 import { Textbox } from "../../textbox.slint";
-import { LineEdit, ScrollView } from "std-widgets.slint";
+import { LineEdit, ScrollView, Switch } from "std-widgets.slint";
 import { SearchAutoComplete } from "../../search.slint";
 
 export struct FilterEntry {
@@ -11,13 +11,28 @@ export struct FilterEntry {
 component FilterDisplay inherits Rectangle {
     in-out property <FilterEntry> filter;
 
+    callback reverse_filter_activation(string);
+
     height: 25px;
 
-    Text {
-        x: 15px;
-        font-size: 14px;
-        font-family: "Lora";
-        text: filter.name;
+    HorizontalLayout {
+        padding-left: 15px;
+        padding-right: self.padding-left;
+
+        Text {
+            font-size: 14px;
+            font-family: "Lora";
+            text: filter.name;
+        }
+        
+        Switch {
+            text: "";
+            checked: filter.enable;
+            toggled => {
+                filter.enable = !filter.enable;
+                root.reverse_filter_activation(filter.name);
+            }
+        }
     }
 }
 
@@ -27,6 +42,7 @@ export component FiltersSubMenu inherits SubMenu {
     in-out property <[FilterEntry]> filters;
 
     callback filter_searched_tags(string);
+    callback reverse_filter_activation(string);
 
     Rectangle {
         height: 30px;
@@ -35,19 +51,18 @@ export component FiltersSubMenu inherits SubMenu {
             icon: "";
             width: parent.width - 20px;
             edited(searched) => {
-                debug(searched);
-                debug(filters.length);
                 root.filter_searched_tags(searched);
             }
         }
     }
 
     ScrollView {
-
         VerticalLayout {
-
             for filter in filters: FilterDisplay {
                 filter: filter;
+                reverse_filter_activation(filter_name) => {
+                    root.reverse_filter_activation(filter_name);
+                }
             }
         }
     }
