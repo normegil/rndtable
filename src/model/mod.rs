@@ -50,9 +50,11 @@ impl Model {
                             hierarchy: vec![
                                 HierarchyElement::Dashboard(Dashboard {
                                     name: "Item 1".to_string(),
+                                    content: vec![],
                                 }),
                                 HierarchyElement::Dashboard(Dashboard {
                                     name: "Item 2".to_string(),
+                                    content: vec![],
                                 }),
                             ],
                         })),
@@ -63,9 +65,11 @@ impl Model {
                         })),
                         HierarchyElement::Dashboard(Dashboard {
                             name: "PNJs".to_string(),
+                            content: vec![],
                         }),
                         HierarchyElement::Dashboard(Dashboard {
                             name: "Environments".to_string(),
+                            content: vec![],
                         }),
                     ],
                 },
@@ -78,9 +82,11 @@ impl Model {
                             hierarchy: vec![
                                 HierarchyElement::Dashboard(Dashboard {
                                     name: "Donjon 1".to_string(),
+                                    content: vec![],
                                 }),
                                 HierarchyElement::Dashboard(Dashboard {
                                     name: "Donjon 2".to_string(),
+                                    content: vec![],
                                 }),
                             ],
                         })),
@@ -91,9 +97,11 @@ impl Model {
                         })),
                         HierarchyElement::Dashboard(Dashboard {
                             name: "Armes".to_string(),
+                            content: vec![],
                         }),
                         HierarchyElement::Dashboard(Dashboard {
                             name: "Objets".to_string(),
+                            content: vec![],
                         }),
                     ],
                 },
