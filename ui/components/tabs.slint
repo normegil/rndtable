@@ -1,10 +1,12 @@
 import { BorderHorizontal, BorderVertical } from "borders.slint";
 import { Palette } from "../palette.slint";
+import { ScrollView } from "std-widgets.slint";
 
 export struct TabData {
     workspace_name: string,
     id: string,
     name: string,
+    content: string,
 }
 
 component TabButton inherits Rectangle {
@@ -86,7 +88,7 @@ export component Tabs inherits VerticalLayout {
 
     callback close-tab(TabData);
 
-    HorizontalLayout {
+    buttons-bar := HorizontalLayout {
         height: 40px;
 
         for tab[i] in tabs: TabButton {
@@ -120,5 +122,24 @@ export component Tabs inherits VerticalLayout {
 
     Rectangle {
         background: Palette.background-secondary;
+        for tab[i] in tabs: Rectangle {
+            visible: i == active_tab;
+            ScrollView {
+                viewport-width: self.width;
+                VerticalLayout {
+                    padding: 10px;
+                    Rectangle {
+                        Text {
+                            width: parent.width;
+    
+                            text: tab.content;
+                            font-size: 14px;
+                            font-family: "Lora";
+                            wrap: TextWrap.word-wrap;
+                        } 
+                    }
+                }
+            }
+        }        
     }
 }
