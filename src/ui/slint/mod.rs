@@ -8,6 +8,8 @@ use crate::model::{
     workspaces::{HierarchyElement, Workspace},
 };
 
+pub mod controller;
+
 slint::include_modules!();
 
 pub struct SlintUI {
