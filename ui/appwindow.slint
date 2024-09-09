@@ -37,8 +37,8 @@ export component AppWindow inherits Window {
     in-out property <int> active_tab;
     in-out property <[TabData]> tabs;
 
-    callback generator_entry_clicked(string, string, bool);
-    callback workspace_changed(string);
+    callback workspace_changed <=> sidebar.workspace_changed;
+    callback generators_entry_selected <=> sidebar.generators_entry_selected;
     callback filter_searched_tags(string);
     callback reverse_filter_activation(string);
     callback reset_filters(string);
@@ -53,17 +53,11 @@ export component AppWindow inherits Window {
             x: 0;
             
             HorizontalLayout {
-                Sidebar {
+                sidebar := Sidebar {
                     current_workspace <=> current_workspace;
                     workspaces <=> workspaces;
                     generation_entries <=> generation_entries;
                     filters <=> filters;
-                    generator_entry_clicked(current_workspace, id, is-folder) => {
-                        root.generator_entry_clicked(current_workspace, id, is-folder);
-                    }
-                    workspace_changed(workspace-name) => {
-                        root.workspace_changed(workspace-name);
-                    }
                     filter_searched_tags(searched) => {
                         root.filter_searched_tags(searched)
                     }

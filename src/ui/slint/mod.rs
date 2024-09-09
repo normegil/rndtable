@@ -55,7 +55,7 @@ impl SlintUI {
         let model_clone = Rc::downgrade(&self.model);
         let ui_clone = self.ui.as_weak();
         self.ui
-            .on_generator_entry_clicked(move |current_workspace, id, is_folder| {
+            .on_generators_entry_selected(move |current_workspace, id, is_folder| {
                 if is_folder {
                     let model = model_clone
                         .upgrade()

@@ -9,21 +9,18 @@ export component GeneratorsSubMenu inherits SubMenu {
     in-out property <[string]> workspaces;
     in-out property <[HierarchyEntry]> entries;
 
-    callback workspace_changed(string);
-    callback clicked_entry(string, bool);
+    callback workspace_changed <=> workspace-selector.selected;
+    callback entry_selected <=> hierarchy.entry_selected;
 
     title: "GENERATORS";
 
     Rectangle {
         height: 26px;
 
-        CustomComboBox {
+        workspace-selector := CustomComboBox {
             width: parent.width - 20px;
             model <=> workspaces;
             active_option <=> current_workspace;
-            selected(workspace_name) => {
-                root.workspace_changed(workspace-name)
-            }
         }
     }
 
@@ -32,11 +29,8 @@ export component GeneratorsSubMenu inherits SubMenu {
     }
 
     ScrollView {
-         Hierarchy {
+         hierarchy := Hierarchy {
             entries <=> entries;
-            clicked_entry(id, is-folder) => {
-                root.clicked_entry(id, is-folder);
-            }
          }
     }
 }

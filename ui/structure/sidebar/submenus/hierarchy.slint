@@ -41,14 +41,14 @@ component HierarchyElement inherits Rectangle {
 export component Hierarchy inherits Rectangle {
     in-out property <[HierarchyEntry]> entries;
 
-    callback clicked_entry(string, bool);
+    callback entry_selected(string, bool);
 
     VerticalLayout {
         for entry in entries: HierarchyElement {
             width: parent.width;
             entry: entry;
             clicked(id, is-folder) => {
-                root.clicked_entry(id, is-folder)
+                root.entry_selected(id, is-folder)
             }
         }
     }
