@@ -82,6 +82,27 @@ component TabButton inherits Rectangle {
     ]
 }
 
+component TabContent inherits Rectangle{
+    in-out property <TabData> tab;
+
+    ScrollView {
+        viewport-width: self.width;
+        VerticalLayout {
+            padding: 10px;
+            Rectangle {
+                Text {
+                    width: parent.width;
+
+                    text: tab.content;
+                    font-size: 14px;
+                    font-family: "Lora";
+                    wrap: TextWrap.word-wrap;
+                } 
+            }
+        }
+    }
+}
+
 export component Tabs inherits VerticalLayout {
     in-out property <int> active_tab;
     in-out property <[TabData]> tabs;
@@ -122,24 +143,9 @@ export component Tabs inherits VerticalLayout {
 
     Rectangle {
         background: Palette.background-secondary;
-        for tab[i] in tabs: Rectangle {
+        for tab[i] in tabs: TabContent {
+            tab: tab;
             visible: i == active_tab;
-            ScrollView {
-                viewport-width: self.width;
-                VerticalLayout {
-                    padding: 10px;
-                    Rectangle {
-                        Text {
-                            width: parent.width;
-    
-                            text: tab.content;
-                            font-size: 14px;
-                            font-family: "Lora";
-                            wrap: TextWrap.word-wrap;
-                        } 
-                    }
-                }
-            }
         }        
     }
 }
