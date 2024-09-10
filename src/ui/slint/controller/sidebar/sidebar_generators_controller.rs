@@ -1,11 +1,11 @@
-use crate::ui::slint::{controller::{self, Controller}, translators};
+use crate::ui::slint::{
+    controller::{self, Controller},
+    translators,
+};
 
 use slint::{Model, VecModel};
 
-use crate::{
-    model,
-    ui::slint::ui_modules::TabData,
-};
+use crate::{model, ui::slint::ui_modules::TabData};
 
 pub struct SidebarGeneratorController {
     ctrl: Controller,
@@ -13,9 +13,7 @@ pub struct SidebarGeneratorController {
 
 impl From<Controller> for SidebarGeneratorController {
     fn from(value: Controller) -> Self {
-        SidebarGeneratorController {
-            ctrl: value,
-        }
+        SidebarGeneratorController { ctrl: value }
     }
 }
 

@@ -2,9 +2,7 @@ use crate::ui::slint::controller::{self, Controller};
 
 use slint::{ModelRc, VecModel};
 
-use crate::
-    ui::slint::ui_modules::FilterEntry
-;
+use crate::ui::slint::ui_modules::FilterEntry;
 
 pub struct SidebarFilterController {
     ctrl: Controller,
@@ -12,9 +10,7 @@ pub struct SidebarFilterController {
 
 impl From<Controller> for SidebarFilterController {
     fn from(value: Controller) -> Self {
-        SidebarFilterController {
-            ctrl: value,
-        }
+        SidebarFilterController { ctrl: value }
     }
 }
 
@@ -31,7 +27,8 @@ impl SidebarFilterController {
                 enable: f.enabled,
             })
             .collect();
-        controller::upgrade_ui(self.ctrl.ui).set_filters(ModelRc::new(VecModel::from(filtered_filters)));
+        controller::upgrade_ui(self.ctrl.ui)
+            .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
     }
 
     pub fn invert_filter_activation(self, filter_name: &str) {
@@ -69,6 +66,7 @@ impl SidebarFilterController {
                 enable: f.enabled,
             })
             .collect();
-        controller::upgrade_ui(self.ctrl.ui).set_filters(ModelRc::new(VecModel::from(filtered_filters)));
+        controller::upgrade_ui(self.ctrl.ui)
+            .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
     }
 }

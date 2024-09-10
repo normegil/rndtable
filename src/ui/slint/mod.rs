@@ -1,11 +1,19 @@
 use std::{rc::Rc, sync::RwLock};
 
-use controller::Controller;
-use slint::{ComponentHandle, Model, ModelRc, PlatformError, SharedString, VecModel};
+use controller::{
+    content::tabs::TabsController,
+    sidebar::{
+        sidebar_filters_controller::SidebarFilterController,
+        sidebar_generators_controller::SidebarGeneratorController,
+    },
+    Controller,
+};
+
+use slint::{PlatformError, SharedString, ComponentHandle};
 
 use crate::{
-    main, model,
-    ui::slint::ui_modules::{AppWindow, FilterEntry, TabData},
+    model::{self},
+    ui::slint::ui_modules::AppWindow
 };
 
 pub mod controller;
@@ -60,7 +68,7 @@ impl SlintUI {
         let ctrl = main_ctrl.clone();
         self.ui
             .on_generators_entry_selected(move |current_workspace, id, is_folder| {
-                let ctrl = ctrl.clone();
+                let ctrl = SidebarGeneratorController::from(ctrl.clone());
                 let current_workspace = current_workspace.as_str();
                 let id = id.as_str();
                 if is_folder {
@@ -72,27 +80,29 @@ impl SlintUI {
 
         let ctrl = main_ctrl.clone();
         self.ui.on_workspace_changed(move |workspace_name| {
-            ctrl.clone().change_workspace(workspace_name.as_str());
+            SidebarGeneratorController::from(ctrl.clone())
+                .change_workspace(workspace_name.as_str());
         });
 
         let ctrl = main_ctrl.clone();
         self.ui.on_filter_searched_tags(move |searched| {
-            ctrl.clone().filter_displayed_tags(searched.as_str())
+            SidebarFilterController::from(ctrl.clone()).filter_displayed_tags(searched.as_str())
         });
 
         let ctrl = main_ctrl.clone();
         self.ui.on_reverse_filter_activation(move |filter_name| {
-            ctrl.clone().invert_filter_activation(filter_name.as_str())
+            SidebarFilterController::from(ctrl.clone())
+                .invert_filter_activation(filter_name.as_str())
         });
 
         let ctrl = main_ctrl.clone();
         self.ui.on_reset_filters(move |current_searched| {
-            ctrl.clone().reset_filters(current_searched.as_str())
+            SidebarFilterController::from(ctrl.clone()).reset_filters(current_searched.as_str())
         });
 
         let ctrl = main_ctrl.clone();
         self.ui
-            .on_close_tab(move |data| ctrl.clone().tabs_close(data));
+            .on_close_tab(move |data| TabsController::from(ctrl.clone()).tabs_close(data));
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {
