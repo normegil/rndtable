@@ -1,0 +1,2 @@
+mod sidebar_generators_controller;
+mod sidebar_filters_controller;
