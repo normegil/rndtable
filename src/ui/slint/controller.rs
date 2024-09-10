@@ -3,7 +3,7 @@ use std::{
     sync::RwLock,
 };
 
-use slint::{Model, VecModel};
+use slint::{ComponentHandle, Model, VecModel};
 
 use crate::{
     model,
@@ -12,6 +12,7 @@ use crate::{
 
 use super::translators;
 
+#[derive(Clone)]
 pub struct Controller {
     model: Weak<RwLock<model::Model>>,
     ui: slint::Weak<AppWindow>,
@@ -20,6 +21,13 @@ pub struct Controller {
 impl Controller {
     pub fn new(model: Weak<RwLock<model::Model>>, ui: slint::Weak<AppWindow>) -> Controller {
         Controller { model, ui }
+    }
+
+    pub fn from(model: &Rc<RwLock<model::Model>>, ui: &AppWindow) -> Controller {
+        Controller {
+            model: Rc::downgrade(model),
+            ui: ui.as_weak(),
+        }
     }
 
     pub fn reverse_folding(self, current_workspace: &str, id: &str) {

@@ -55,11 +55,10 @@ impl SlintUI {
     }
 
     fn register_callbacks(&self) {
-        let model_clone = Rc::downgrade(&self.model);
-        let ui_clone = self.ui.as_weak();
+        let ctrl = Controller::from(&self.model, &self.ui);
         self.ui
             .on_generators_entry_selected(move |current_workspace, id, is_folder| {
-                let ctrl = Controller::new(model_clone.clone(), ui_clone.clone());
+                let ctrl = ctrl.clone();
                 let current_workspace = current_workspace.as_str();
                 let id = id.as_str();
                 if is_folder {
@@ -69,10 +68,9 @@ impl SlintUI {
                 }
             });
 
-        let model_clone = Rc::downgrade(&self.model);
-        let ui_clone = self.ui.as_weak();
+        let ctrl = Controller::from(&self.model, &self.ui);
         self.ui.on_workspace_changed(move |workspace_name| {
-            Controller::new(model_clone.clone(), ui_clone.clone()).change_workspace(workspace_name.as_str());
+            ctrl.clone().change_workspace(workspace_name.as_str());
         });
 
         let model_clone = Rc::downgrade(&self.model);
