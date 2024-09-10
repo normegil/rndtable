@@ -72,25 +72,7 @@ impl SlintUI {
         let model_clone = Rc::downgrade(&self.model);
         let ui_clone = self.ui.as_weak();
         self.ui.on_workspace_changed(move |workspace_name| {
-            let model = model_clone
-                .upgrade()
-                .expect("Model should not be dropped before the end of the program");
-            {
-                model
-                    .write()
-                    .expect("Model is not writable, but a menu need to be fold")
-                    .set_current_workspace(workspace_name.as_str());
-            }
-            let model_read = model.read().expect("Model should be readable");
-            ui_clone
-                .upgrade()
-                .expect("UI should not be dropped before the end of the program")
-                .set_generation_entries(translators::to_entries_model(
-                    &model_read
-                        .get_current_workspace()
-                        .expect("Current workspace not found - should not happen")
-                        .hierarchy,
-                ))
+            Controller::new(model_clone.clone(), ui_clone.clone()).change_workspace(workspace_name.as_str());
         });
 
         let model_clone = Rc::downgrade(&self.model);

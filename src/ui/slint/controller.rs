@@ -75,6 +75,23 @@ impl Controller {
                 .expect("Usize to i32 conversion should work"),
         );
     }
+
+    pub fn change_workspace(self, workspace_name: &str) {
+        let model = upgrade_model(self.model);
+        {
+            model
+                .write()
+                .expect("Model is not writable, but a menu need to be fold")
+                .set_current_workspace(workspace_name);
+        }
+        let model_read = model.read().expect("Model should be readable");
+        upgrade_ui(self.ui).set_generation_entries(translators::to_entries_model(
+            &model_read
+                .get_current_workspace()
+                .expect("Current workspace not found - should not happen")
+                .hierarchy,
+        ))
+    }
 }
 
 fn upgrade_model(model: Weak<RwLock<model::Model>>) -> Rc<RwLock<model::Model>> {
