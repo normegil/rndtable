@@ -3,11 +3,11 @@ use std::{
     sync::RwLock,
 };
 
-use slint::{ComponentHandle, Model, VecModel};
+use slint::{ComponentHandle, Model, ModelRc, VecModel};
 
 use crate::{
     model,
-    ui::slint::ui_modules::{AppWindow, TabData},
+    ui::slint::ui_modules::{AppWindow, FilterEntry, TabData},
 };
 
 use super::translators;
@@ -19,10 +19,6 @@ pub struct Controller {
 }
 
 impl Controller {
-    pub fn new(model: Weak<RwLock<model::Model>>, ui: slint::Weak<AppWindow>) -> Controller {
-        Controller { model, ui }
-    }
-
     pub fn from(model: &Rc<RwLock<model::Model>>, ui: &AppWindow) -> Controller {
         Controller {
             model: Rc::downgrade(model),
@@ -99,6 +95,82 @@ impl Controller {
                 .expect("Current workspace not found - should not happen")
                 .hierarchy,
         ))
+    }
+
+    pub fn filter_displayed_tags(self, searched: &str) {
+        let model = upgrade_model(self.model);
+        let model_read = model.read().expect("Model should be readable");
+        let filtered_filters: Vec<FilterEntry> = model_read
+            .filter_list
+            .iter()
+            .filter(|f| f.name.contains(searched))
+            .map(|f| FilterEntry {
+                name: f.name.clone().into(),
+                enable: f.enabled,
+            })
+            .collect();
+        upgrade_ui(self.ui).set_filters(ModelRc::new(VecModel::from(filtered_filters)));
+    }
+
+    pub fn invert_filter_activation(self, filter_name: &str) {
+        let model = upgrade_model(self.model);
+        {
+            let mut model_write = model
+                .write()
+                .expect("Model is not writable, but a menu need to be fold");
+            for filter in model_write.filter_list.iter_mut() {
+                if filter.name == filter_name.to_string() {
+                    filter.enabled = !filter.enabled;
+                }
+            }
+        }
+    }
+
+    pub fn reset_filters(self, current_searched: &str) {
+        let model = upgrade_model(self.model);
+        {
+            let mut model_write = model
+                .write()
+                .expect("Model is not writable, but a menu need to be fold");
+            for filter in model_write.filter_list.iter_mut() {
+                filter.enabled = false;
+            }
+        }
+        println!("{}", current_searched);
+        let model_read = model.read().expect("Model should be readable");
+        let filtered_filters: Vec<FilterEntry> = model_read
+            .filter_list
+            .iter()
+            .filter(|f| f.name.contains(current_searched))
+            .map(|f| FilterEntry {
+                name: f.name.clone().into(),
+                enable: f.enabled,
+            })
+            .collect();
+        upgrade_ui(self.ui).set_filters(ModelRc::new(VecModel::from(filtered_filters)));
+    }
+
+    pub fn tabs_close(self, data: TabData) {
+        let ui = upgrade_ui(self.ui);
+        let tabs_rc = ui.get_tabs();
+        let tabs = tabs_rc
+            .as_any()
+            .downcast_ref::<VecModel<TabData>>()
+            .expect("We know we set a VecModel earlier");
+        let found_tabs: Vec<(usize, TabData)> = tabs
+            .iter()
+            .enumerate()
+            .filter(|(_, t)| t.workspace_name == data.workspace_name && t.id == &data.id)
+            .collect();
+        if found_tabs.len() != 0 {
+            let index = found_tabs
+                .get(0)
+                .expect(
+                    "Found tabs should not be empty at this point - Checked ina previous condition",
+                )
+                .0;
+            tabs.remove(index);
+        }
     }
 }
 

@@ -4,7 +4,7 @@ use controller::Controller;
 use slint::{ComponentHandle, Model, ModelRc, PlatformError, SharedString, VecModel};
 
 use crate::{
-    model,
+    main, model,
     ui::slint::ui_modules::{AppWindow, FilterEntry, TabData},
 };
 
@@ -55,7 +55,9 @@ impl SlintUI {
     }
 
     fn register_callbacks(&self) {
-        let ctrl = Controller::from(&self.model, &self.ui);
+        let main_ctrl = Controller::from(&self.model, &self.ui);
+
+        let ctrl = main_ctrl.clone();
         self.ui
             .on_generators_entry_selected(move |current_workspace, id, is_folder| {
                 let ctrl = ctrl.clone();
@@ -68,99 +70,29 @@ impl SlintUI {
                 }
             });
 
-        let ctrl = Controller::from(&self.model, &self.ui);
+        let ctrl = main_ctrl.clone();
         self.ui.on_workspace_changed(move |workspace_name| {
             ctrl.clone().change_workspace(workspace_name.as_str());
         });
 
-        let model_clone = Rc::downgrade(&self.model);
-        let ui_clone = self.ui.as_weak();
+        let ctrl = main_ctrl.clone();
         self.ui.on_filter_searched_tags(move |searched| {
-            let model = model_clone
-                .upgrade()
-                .expect("Model should not be dropped before the end of the program");
-            let model_read = model.read().expect("Model should be readable");
-            let filtered_filters: Vec<FilterEntry> = model_read
-                .filter_list
-                .iter()
-                .filter(|f| f.name.contains(searched.as_str()))
-                .map(|f| FilterEntry {
-                    name: SharedString::from(f.name.to_string()),
-                    enable: f.enabled,
-                })
-                .collect();
-            ui_clone
-                .upgrade()
-                .expect("UI should not be dropped before the end of the program")
-                .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
+            ctrl.clone().filter_displayed_tags(searched.as_str())
         });
 
-        let model_clone = Rc::downgrade(&self.model);
+        let ctrl = main_ctrl.clone();
         self.ui.on_reverse_filter_activation(move |filter_name| {
-            let model = model_clone
-                .upgrade()
-                .expect("Model should not be dropped before the end of the program");
-            {
-                let mut model_write = model
-                    .write()
-                    .expect("Model is not writable, but a menu need to be fold");
-                for filter in model_write.filter_list.iter_mut() {
-                    if filter.name == filter_name.to_string() {
-                        filter.enabled = !filter.enabled;
-                    }
-                }
-            }
+            ctrl.clone().invert_filter_activation(filter_name.as_str())
         });
 
-        let model_clone = Rc::downgrade(&self.model);
-        let ui_clone = self.ui.as_weak();
+        let ctrl = main_ctrl.clone();
         self.ui.on_reset_filters(move |current_searched| {
-            let model = model_clone
-                .upgrade()
-                .expect("Model should not be dropped before the end of the program");
-            {
-                let mut model_write = model
-                    .write()
-                    .expect("Model is not writable, but a menu need to be fold");
-                for filter in model_write.filter_list.iter_mut() {
-                    filter.enabled = false;
-                }
-            }
-            println!("{}", current_searched);
-            let model_read = model.read().expect("Model should be readable");
-            let filtered_filters: Vec<FilterEntry> = model_read
-                .filter_list
-                .iter()
-                .filter(|f| f.name.contains(current_searched.as_str()))
-                .map(|f| FilterEntry {
-                    name: SharedString::from(f.name.to_string()),
-                    enable: f.enabled,
-                })
-                .collect();
-            ui_clone
-                .upgrade()
-                .expect("UI should not be dropped before the end of the program")
-                .set_filters(ModelRc::new(VecModel::from(filtered_filters)));
+            ctrl.clone().reset_filters(current_searched.as_str())
         });
-        let ui_clone = self.ui.as_weak();
-        self.ui.on_close_tab(move |data| {
-            let ui = ui_clone
-                    .upgrade()
-                    .expect("UI should not be dropped before the end of the program");
-            let tabs_rc = ui
-                .get_tabs();
-            let tabs = tabs_rc
-                .as_any()
-                .downcast_ref::<VecModel<TabData>>()
-                .expect("We know we set a VecModel earlier");
-            let found_tabs: Vec<(usize, TabData)> = tabs.iter().enumerate().filter(|(_, t)| t.workspace_name == data.workspace_name && t.id == &data.id).collect();
-            if found_tabs.len() != 0 {
-                let index = found_tabs.get(0)
-                .expect("Found tabs should not be empty at this point - Checked ina previous condition")
-                .0;
-                tabs.remove(index);
-            }
-        });
+
+        let ctrl = main_ctrl.clone();
+        self.ui
+            .on_close_tab(move |data| ctrl.clone().tabs_close(data));
     }
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {
