@@ -1,16 +1,11 @@
 use std::{rc::Rc, sync::RwLock};
 
-use slint::{Model, ModelRc, PlatformError, SharedString, VecModel};
+use slint::{Model, ComponentHandle, ModelRc, PlatformError, SharedString, VecModel};
 
-use crate::model::{
-    self,
-    filters::Filter,
-    workspaces::{HierarchyElement, Workspace},
-};
+use crate::{model, ui::slint::ui_modules::{AppWindow, TabData, FilterEntry}};
 
-pub mod controller;
-
-slint::include_modules!();
+pub mod translators;
+pub mod ui_modules;
 
 pub struct SlintUI {
     model: Rc<RwLock<model::Model>>,
@@ -42,13 +37,13 @@ impl SlintUI {
         let current_workspace_name = current_workspace.name.as_str();
 
         self.ui
-            .set_workspaces(to_workspace_model(&model_read.workspaces));
+            .set_workspaces(translators::to_workspace_model(&model_read.workspaces));
         self.ui
             .set_current_workspace(SharedString::from(current_workspace_name));
         self.ui
-            .set_generation_entries(to_entries_model(&current_workspace.hierarchy));
+            .set_generation_entries(translators::to_entries_model(&current_workspace.hierarchy));
 
-        self.ui.set_filters(to_ui_filters(&model_read.filter_list));
+        self.ui.set_filters(translators::to_ui_filters(&model_read.filter_list));
 
         Ok(())
     }
@@ -73,7 +68,7 @@ impl SlintUI {
                     ui_clone
                         .upgrade()
                         .expect("UI should not be dropped before the end of the program")
-                        .set_generation_entries(to_entries_model(
+                        .set_generation_entries(translators::to_entries_model(
                             &model_read
                                 .get_current_workspace()
                                 .expect("Current workspace not found - should not happen")
@@ -175,7 +170,7 @@ Fusce ut tortor nunc. Suspendisse ac quam molestie, lacinia enim et, tincidunt l
             ui_clone
                 .upgrade()
                 .expect("UI should not be dropped before the end of the program")
-                .set_generation_entries(to_entries_model(
+                .set_generation_entries(translators::to_entries_model(
                     &model_read
                         .get_current_workspace()
                         .expect("Current workspace not found - should not happen")
@@ -275,75 +270,5 @@ Fusce ut tortor nunc. Suspendisse ac quam molestie, lacinia enim et, tincidunt l
 
     pub fn run(&self) -> Result<(), slint::PlatformError> {
         self.ui.run()
-    }
-}
-
-fn to_workspace_model(workspaces: &Vec<Workspace>) -> ModelRc<SharedString> {
-    let tmp = workspaces
-        .iter()
-        .map(|s| SharedString::from(&s.name))
-        .collect::<Vec<SharedString>>();
-    let tmp = VecModel::from(tmp);
-    ModelRc::new(tmp)
-}
-
-fn to_entries_model(entries: &Vec<HierarchyElement>) -> ModelRc<HierarchyEntry> {
-    let mut hierarchy_entry = vec![];
-    for element in entries {
-        hierarchy_entry.extend(flatten_entry(element, 0, "/"))
-    }
-
-    let tmp = VecModel::from(hierarchy_entry);
-    ModelRc::new(tmp)
-}
-
-fn to_ui_filters(filters: &Vec<Filter>) -> ModelRc<FilterEntry> {
-    let filters_entry: Vec<FilterEntry> = filters
-        .iter()
-        .map(|f| FilterEntry {
-            name: SharedString::from(f.name.to_string()),
-            enable: f.enabled,
-        })
-        .collect();
-    let filter_entries = VecModel::from(filters_entry);
-    ModelRc::new(filter_entries)
-}
-
-fn flatten_entry(
-    entry: &HierarchyElement,
-    identation: i32,
-    parent_id: &str,
-) -> Vec<HierarchyEntry> {
-    match entry {
-        HierarchyElement::DashboardFolder(folder) => {
-            let current_id = parent_id.to_string() + "/" + &folder.name;
-            let mut elements = vec![HierarchyEntry {
-                id: SharedString::from(parent_id.to_string() + "/" + &folder.name),
-                title: SharedString::from(&folder.name),
-                folded: false,
-                identation,
-                is_folder: true,
-            }];
-
-            if !folder.folded {
-                for hierarchy_element in &folder.hierarchy {
-                    elements.extend(flatten_entry(
-                        hierarchy_element,
-                        identation + 1,
-                        &current_id,
-                    ))
-                }
-            }
-            return elements;
-        }
-        HierarchyElement::Dashboard(dashboard) => {
-            return vec![HierarchyEntry {
-                id: SharedString::from(parent_id.to_string() + "/" + &dashboard.name),
-                title: SharedString::from(&dashboard.name),
-                folded: false,
-                identation,
-                is_folder: false,
-            }];
-        }
     }
 }
