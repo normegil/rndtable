@@ -5,8 +5,8 @@ use workspaces::{DashboardFolder, HierarchyElement, Workspace};
 
 pub mod dashboard;
 pub mod filters;
-pub mod workspaces;
 pub mod tables;
+pub mod workspaces;
 
 #[derive(Debug, Error)]
 pub enum Error {

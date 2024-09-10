@@ -1,8 +1,11 @@
 use slint::{ModelRc, SharedString, VecModel};
 
-use crate::model::{filters::Filter, workspaces::{HierarchyElement, Workspace}};
+use crate::model::{
+    filters::Filter,
+    workspaces::{HierarchyElement, Workspace},
+};
 
-use crate::ui::slint::ui_modules::{HierarchyEntry, FilterEntry};
+use crate::ui::slint::ui_modules::{FilterEntry, HierarchyEntry};
 
 pub fn to_workspace_model(workspaces: &Vec<Workspace>) -> ModelRc<SharedString> {
     let tmp = workspaces
