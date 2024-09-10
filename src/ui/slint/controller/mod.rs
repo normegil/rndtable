@@ -10,6 +10,8 @@ use crate::{
     ui::slint::ui_modules::{AppWindow, FilterEntry, TabData},
 };
 
+mod sidebar;
+
 use super::translators;
 
 #[derive(Clone)]
